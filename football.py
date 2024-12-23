@@ -1,5 +1,15 @@
 import pygame
 import sys
+import random
+
+
+def play_sound(what_sound):
+    if what_sound == "kick":
+        kicks = ["kick (1).wav", "kick (2).wav", "kick (3).wav"]
+        random_kick = random.choice(kicks)
+        random_sound = pygame.mixer.Sound(random_kick)
+        random_sound.play()
+
 
 # Initialize Pygame
 pygame.init()
@@ -170,6 +180,8 @@ while running:
                         used_paths_player2.append((player_pos, new_pos))
 
                     used_paths.append((player_pos, new_pos))
+
+                    play_sound("kick")
 
                     # Check if the new position is already part of the path
                     if change:
