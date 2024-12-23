@@ -8,7 +8,7 @@ pygame.init()
 x = 4
 y = 6
 BORDER_SIZE = 20
-GRID_SIZE = 80
+GRID_SIZE = 40
 GRID_WIDTH = 2 * x * GRID_SIZE
 GRID_HEIGHT = 2 * y * GRID_SIZE
 WIDTH, HEIGHT = GRID_WIDTH + 2 * BORDER_SIZE, GRID_HEIGHT + 2 * BORDER_SIZE
@@ -19,9 +19,8 @@ FPS = 30
 WHITE = (235, 235, 255)
 PALE_BLUE = (173, 216, 230)  # Pale blue color
 RED = (255, 0, 0)  # Red border
-DARK_BLUE = (0, 0, 150)  # Dark blue for player path
+DARK_BLUE = (0, 0, 100)  # Dark blue for player path
 BLACK = (0, 0, 0)
-BLUE = (0, 0, 250)
 
 # Set up the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -66,73 +65,66 @@ for i in range(GRID_SIZE, GRID_HEIGHT - GRID_SIZE, GRID_SIZE):
     startpos = [BORDER_SIZE, i + BORDER_SIZE]
     endpos = [BORDER_SIZE, i + BORDER_SIZE + GRID_SIZE]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos, DARK_BLUE))
+    used_paths.append((startpos, endpos))
 
     startpos = [GRID_WIDTH + BORDER_SIZE, i + BORDER_SIZE]
     endpos = [GRID_WIDTH + BORDER_SIZE, i + BORDER_SIZE + GRID_SIZE]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos, DARK_BLUE))
+    used_paths.append((startpos, endpos))
 
 # Draw middle line
 for i in range(BORDER_SIZE, GRID_WIDTH, GRID_SIZE):
-    startpos = [i, (GRID_HEIGHT / 2) + BORDER_SIZE]
-    endpos = [i + GRID_SIZE, (GRID_HEIGHT / 2) + BORDER_SIZE]
-    pygame.draw.line(screen, RED, startpos, endpos, 3)
-    used_paths.append((startpos, endpos, DARK_BLUE))
+    startpos = [i, (GRID_HEIGHT + GRID_SIZE) / 2]
+    endpos = [i + GRID_SIZE, (GRID_HEIGHT + GRID_SIZE) / 2]
+    pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
+    used_paths.append((startpos, endpos))
 
 # Draw top lines
 for i in range(BORDER_SIZE, int(GRID_WIDTH / 2) - GRID_SIZE, GRID_SIZE):
     startpos = [i, BORDER_SIZE + GRID_SIZE]
     endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos, DARK_BLUE))
+    used_paths.append((startpos, endpos))
 for i in range(int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, GRID_WIDTH, GRID_SIZE):
     startpos = [i, BORDER_SIZE + GRID_SIZE]
     endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos, DARK_BLUE))
+    used_paths.append((startpos, endpos))
 # bottom lines
 for i in range(BORDER_SIZE, int(GRID_WIDTH / 2) - GRID_SIZE, GRID_SIZE):
-    startpos = [i, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
-    endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
+    startpos = [i, GRID_HEIGHT - BORDER_SIZE]
+    endpos = [i + GRID_SIZE, GRID_HEIGHT - BORDER_SIZE]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos, DARK_BLUE))
+    used_paths.append((startpos, endpos))
 for i in range(int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, GRID_WIDTH, GRID_SIZE):
-    startpos = [i, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
-    endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
+    startpos = [i, GRID_HEIGHT - BORDER_SIZE]
+    endpos = [i + GRID_SIZE, GRID_HEIGHT - BORDER_SIZE]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos, DARK_BLUE))
+    used_paths.append((startpos, endpos))
 # top goal
 startpos = [int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, BORDER_SIZE]
 endpos = [int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, BORDER_SIZE + GRID_SIZE]
 pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-used_paths.append((startpos, endpos, DARK_BLUE))
+used_paths.append((startpos, endpos))
 startpos = [int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE, BORDER_SIZE]
 endpos = [int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE, BORDER_SIZE + GRID_SIZE]
 pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-used_paths.append((startpos, endpos, DARK_BLUE))
+used_paths.append((startpos, endpos))
 # bottom goal
-
-startpos = [
-    int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
-    GRID_HEIGHT + BORDER_SIZE - GRID_SIZE,
-]
+startpos = [int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, GRID_HEIGHT - BORDER_SIZE]
 endpos = [
     int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
-    GRID_HEIGHT + BORDER_SIZE,
+    GRID_HEIGHT - BORDER_SIZE + GRID_SIZE,
 ]
 pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-used_paths.append((startpos, endpos, DARK_BLUE))
-startpos = [
-    int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE,
-    GRID_HEIGHT + BORDER_SIZE - GRID_SIZE,
-]
+used_paths.append((startpos, endpos))
+startpos = [int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE, GRID_HEIGHT - BORDER_SIZE]
 endpos = [
     int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE,
-    GRID_HEIGHT + BORDER_SIZE,
+    GRID_HEIGHT - BORDER_SIZE + GRID_SIZE,
 ]
 pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-used_paths.append((startpos, endpos, DARK_BLUE))
+used_paths.append((startpos, endpos))
 
 while running:
     for event in pygame.event.get():
@@ -161,21 +153,13 @@ while running:
                     and (player_pos, new_pos) not in used_paths
                     and (new_pos, player_pos) not in used_paths
                 ):
-                    change = False
-                    if not any(new_pos in path for path in used_paths):
-                        change = True
-
-                    if first_player:
-                        used_paths.append((player_pos, new_pos, BLACK))
-                    elif not first_player:
-                        used_paths.append((player_pos, new_pos, BLUE))
 
                     # Check if the new position is already part of the path
-                    if change:
+                    if not any(new_pos in path for path in used_paths):
+                        print("ping")
                         first_player = not first_player
 
-                    change = False
-
+                    used_paths.append((player_pos, new_pos))
                     player_pos = new_pos
 
     # Clear the screen
@@ -189,10 +173,10 @@ while running:
 
     # Draw used paths with dark blue
     for path in used_paths:
-        pygame.draw.line(screen, path[2], path[0], path[1], 2)
+        pygame.draw.line(screen, DARK_BLUE, path[0], path[1], 2)
 
     # Draw player with black circle
-    pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 4)
+    pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 3.5)
 
     # Update the display
     pygame.display.flip()
