@@ -18,7 +18,7 @@ def game_body():
     # Constants
     x = 4
     y = 6
-    BORDER_SIZE = 170
+    BORDER_SIZE = 150
     GRID_SIZE = 55
 
     GRID_WIDTH = 2 * x * GRID_SIZE
@@ -35,6 +35,7 @@ def game_body():
     DARK_BLUE = (30, 0, 130)  # Dark blue for player path
     BLACK = (0, 0, 0)
     BLUE = (0, 0, 200)
+    DARK_GREY = (100, 100, 100)
 
     # Set up the display
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -48,6 +49,8 @@ def game_body():
     used_paths_player1 = []
     used_paths_player2 = []
 
+    img = pygame.image.load("ball.png")
+    img = pygame.transform.scale(img, (GRID_SIZE * 0.5, GRID_SIZE * 0.5))
     # Turn
     first_player = True
 
@@ -225,7 +228,11 @@ def game_body():
             pygame.draw.line(screen, BLUE, path[0], path[1], 3)
 
         # Draw player with black circle
-        pygame.draw.circle(screen, BLACK, ball_position, GRID_SIZE // 5)
+        pygame.draw.circle(screen, DARK_GREY, ball_position, GRID_SIZE // 5)
+
+        rect = img.get_rect()
+        rect.center = ball_position
+        screen.blit(img, rect)
 
         # Update the display
         pygame.display.flip()
