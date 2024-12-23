@@ -18,8 +18,8 @@ def game_body():
     # Constants
     x = 4
     y = 6
-    BORDER_SIZE = 20
-    GRID_SIZE = 40
+    BORDER_SIZE = 70
+    GRID_SIZE = 73
     GRID_WIDTH = 2 * x * GRID_SIZE
     GRID_HEIGHT = 2 * y * GRID_SIZE
     WIDTH, HEIGHT = GRID_WIDTH + 2 * BORDER_SIZE, GRID_HEIGHT + 2 * BORDER_SIZE
@@ -90,36 +90,44 @@ def game_body():
         used_paths.append((startpos, endpos))
 
     # Draw middle line
-    for i in range(BORDER_SIZE, GRID_WIDTH, GRID_SIZE):
-        startpos = [i, (GRID_HEIGHT + GRID_SIZE) / 2]
-        endpos = [i + GRID_SIZE, (GRID_HEIGHT + GRID_SIZE) / 2]
+    for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
+        startpos = [i, BORDER_SIZE + (GRID_HEIGHT) / 2]
+        endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_HEIGHT / 2]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
 
     # Draw top lines
-    for i in range(BORDER_SIZE, int(GRID_WIDTH / 2) - GRID_SIZE, GRID_SIZE):
+    for i in range(
+        BORDER_SIZE, BORDER_SIZE + int(GRID_WIDTH / 2) - GRID_SIZE, GRID_SIZE
+    ):
         startpos = [i, BORDER_SIZE + GRID_SIZE]
         endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
     for i in range(
-        int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, GRID_WIDTH, GRID_SIZE
+        int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
+        GRID_WIDTH + BORDER_SIZE,
+        GRID_SIZE,
     ):
         startpos = [i, BORDER_SIZE + GRID_SIZE]
         endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
     # bottom lines
-    for i in range(BORDER_SIZE, int(GRID_WIDTH / 2) - GRID_SIZE, GRID_SIZE):
-        startpos = [i, GRID_HEIGHT - BORDER_SIZE]
-        endpos = [i + GRID_SIZE, GRID_HEIGHT - BORDER_SIZE]
+    for i in range(
+        BORDER_SIZE, int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE, GRID_SIZE
+    ):
+        startpos = [i, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
+        endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
     for i in range(
-        int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, GRID_WIDTH, GRID_SIZE
+        int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
+        GRID_WIDTH + BORDER_SIZE,
+        GRID_SIZE,
     ):
-        startpos = [i, GRID_HEIGHT - BORDER_SIZE]
-        endpos = [i + GRID_SIZE, GRID_HEIGHT - BORDER_SIZE]
+        startpos = [i, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
+        endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
     # top goal
@@ -134,21 +142,21 @@ def game_body():
     # bottom goal
     startpos = [
         int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
-        GRID_HEIGHT - BORDER_SIZE,
+        GRID_HEIGHT + BORDER_SIZE - GRID_SIZE,
     ]
     endpos = [
         int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
-        GRID_HEIGHT - BORDER_SIZE + GRID_SIZE,
+        GRID_HEIGHT + BORDER_SIZE,
     ]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
     used_paths.append((startpos, endpos))
     startpos = [
         int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE,
-        GRID_HEIGHT - BORDER_SIZE,
+        GRID_HEIGHT + BORDER_SIZE - GRID_SIZE,
     ]
     endpos = [
         int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE,
-        GRID_HEIGHT - BORDER_SIZE + GRID_SIZE,
+        GRID_HEIGHT + BORDER_SIZE,
     ]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
     used_paths.append((startpos, endpos))
