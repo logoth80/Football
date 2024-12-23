@@ -18,8 +18,9 @@ def game_body():
     # Constants
     x = 4
     y = 6
-    BORDER_SIZE = 70
+    BORDER_SIZE = 170
     GRID_SIZE = 55
+
     GRID_WIDTH = 2 * x * GRID_SIZE
     GRID_HEIGHT = 2 * y * GRID_SIZE
     WIDTH, HEIGHT = GRID_WIDTH + 2 * BORDER_SIZE, GRID_HEIGHT + 2 * BORDER_SIZE
@@ -210,9 +211,9 @@ def game_body():
         # Clear the screen
         screen.fill(WHITE)
         # Draw grid lines
-        for x in range(BORDER_SIZE, WIDTH, GRID_SIZE):
+        for x in range(BORDER_SIZE - 5 * GRID_SIZE, WIDTH, GRID_SIZE):
             pygame.draw.line(screen, PALE_BLUE, (x, 0), (x, HEIGHT))
-        for y in range(BORDER_SIZE, HEIGHT, GRID_SIZE):
+        for y in range(BORDER_SIZE - 5 * GRID_SIZE, HEIGHT, GRID_SIZE):
             pygame.draw.line(screen, PALE_BLUE, (0, y), (WIDTH, y))
 
         # Draw used paths
