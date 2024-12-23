@@ -40,8 +40,6 @@ def game_body():
     # Set up the display
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Football")
-    title_bar_surface = pygame.Surface((WIDTH, 30))
-    title_bar_surface.fill(RED)
 
     # Player starting position
     ball_position = [x * GRID_SIZE + BORDER_SIZE, y * GRID_SIZE + BORDER_SIZE]
