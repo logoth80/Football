@@ -23,7 +23,7 @@ BLACK = (0, 0, 0)
 
 # Set up the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Grid Game")
+pygame.display.set_caption("Football")
 
 # Player starting position
 player_pos = [5* GRID_SIZE+BORDER_SIZE, 10 * GRID_SIZE+BORDER_SIZE]
@@ -71,13 +71,14 @@ while running:
     for y in range(BORDER_SIZE, HEIGHT, GRID_SIZE):
         pygame.draw.line(screen, PALE_BLUE, (0, y), (WIDTH, y))
 
+    # Draw field lines and add them to used path
 
     # Draw used paths with dark blue
     for path in used_paths:
         pygame.draw.line(screen, DARK_BLUE, path[0], path[1])
 
     # Draw player with black circle
-    pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 2)
+    pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 3)
 
     # Update the display
     pygame.display.flip()
