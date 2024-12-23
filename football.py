@@ -17,10 +17,11 @@ FPS = 30
 
 # Colors
 WHITE = (235, 235, 255)
-PALE_BLUE = (173, 216, 230)  # Pale blue color
+PALE_BLUE = (160, 200, 230)  # Pale blue color
 RED = (255, 0, 0)  # Red border
-DARK_BLUE = (0, 0, 100)  # Dark blue for player path
+DARK_BLUE = (0, 0, 130)  # Dark blue for player path
 BLACK = (0, 0, 0)
+BLUE = (0, 0, 220)
 
 # Set up the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -29,6 +30,8 @@ pygame.display.set_caption("Football")
 # Player starting position
 player_pos = [x * GRID_SIZE + BORDER_SIZE, y * GRID_SIZE + BORDER_SIZE]
 used_paths = []
+used_paths_1 = []
+used_paths_2 = []
 
 # Turn
 first_player = True
@@ -154,12 +157,22 @@ while running:
                     and (new_pos, player_pos) not in used_paths
                 ):
 
-                    # Check if the new position is already part of the path
+                    change = False
                     if not any(new_pos in path for path in used_paths):
-                        print("ping")
-                        first_player = not first_player
+                        change = True
+
+                    if first_player:
+                        used_paths_1.append((player_pos, new_pos))
+                    elif not first_player:
+                        used_paths_2.append((player_pos, new_pos))
 
                     used_paths.append((player_pos, new_pos))
+
+                    # Check if the new position is already part of the path
+                    if change:
+                        first_player = not first_player
+
+                    change = False
                     player_pos = new_pos
 
     # Clear the screen
@@ -173,10 +186,14 @@ while running:
 
     # Draw used paths with dark blue
     for path in used_paths:
-        pygame.draw.line(screen, DARK_BLUE, path[0], path[1], 2)
+        pygame.draw.line(screen, DARK_BLUE, path[0], path[1], 3)
+    for path in used_paths_1:
+        pygame.draw.line(screen, BLUE, path[0], path[1], 3)
+    for path in used_paths_2:
+        pygame.draw.line(screen, BLACK, path[0], path[1], 3)
 
     # Draw player with black circle
-    pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 3.5)
+    pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 4)
 
     # Update the display
     pygame.display.flip()
