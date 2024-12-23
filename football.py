@@ -5,17 +5,16 @@ import sys
 pygame.init()
 
 # Constants
-BORDER_SIZE=20
+BORDER_SIZE = 20
 GRID_SIZE = 40
 GRID_WIDTH = 10 * GRID_SIZE
 GRID_HEIGHT = 20 * GRID_SIZE
-WIDTH, HEIGHT = GRID_WIDTH+2*BORDER_SIZE, GRID_HEIGHT+2*BORDER_SIZE
+WIDTH, HEIGHT = GRID_WIDTH + 2 * BORDER_SIZE, GRID_HEIGHT + 2 * BORDER_SIZE
 
 FPS = 30
 
 # Colors
 WHITE = (235, 235, 255)
-
 PALE_BLUE = (173, 216, 230)  # Pale blue color
 RED = (255, 0, 0)  # Red border
 DARK_BLUE = (0, 0, 100)  # Dark blue for player path
@@ -26,7 +25,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Football")
 
 # Player starting position
-player_pos = [5* GRID_SIZE+BORDER_SIZE, 10 * GRID_SIZE+BORDER_SIZE]
+player_pos = [5 * GRID_SIZE + BORDER_SIZE, 10 * GRID_SIZE + BORDER_SIZE]
 used_paths = []
 
 # Directions for Q, W, E, A, D, Z, X, C
@@ -56,11 +55,13 @@ while running:
                 
                 # Check if the new position is within bounds and not already used
                 if BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE and \
-                    BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE and \
-                    (player_pos, new_pos) not in used_paths and (new_pos, player_pos) not in used_paths:
+                   BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE and \
+                   (player_pos, new_pos) not in used_paths and (new_pos, player_pos) not in used_paths:
 
                     used_paths.append((player_pos, new_pos))
                     player_pos = new_pos
+            elif key=="i":
+                print(used_paths)
 
     # Clear the screen
     screen.fill(WHITE)
@@ -71,14 +72,24 @@ while running:
     for y in range(BORDER_SIZE, HEIGHT, GRID_SIZE):
         pygame.draw.line(screen, PALE_BLUE, (0, y), (WIDTH, y))
 
-    # Draw field lines and add them to used path
+    # Draw field lines with dark blue
+    for i in range(GRID_SIZE, GRID_HEIGHT-GRID_SIZE, GRID_SIZE):
+        startpos=[BORDER_SIZE, i+BORDER_SIZE]
+        endpos=[BORDER_SIZE, i+BORDER_SIZE+GRID_SIZE]
+        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
+        used_paths.append((startpos, endpos))
+
+        startpos=[GRID_WIDTH + BORDER_SIZE, i+BORDER_SIZE]
+        endpos=[GRID_WIDTH+BORDER_SIZE, i+BORDER_SIZE+GRID_SIZE]
+        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
+        used_paths.append((startpos, endpos))
 
     # Draw used paths with dark blue
     for path in used_paths:
         pygame.draw.line(screen, DARK_BLUE, path[0], path[1])
 
     # Draw player with black circle
-    pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 3)
+    pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 3.5)
 
     # Update the display
     pygame.display.flip()
