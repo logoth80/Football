@@ -16,12 +16,13 @@ WIDTH, HEIGHT = GRID_WIDTH + 2 * BORDER_SIZE, GRID_HEIGHT + 2 * BORDER_SIZE
 FPS = 30
 
 # Colors
-WHITE = (235, 235, 255)
+WHITE = (225, 225, 255)
 PALE_BLUE = (160, 200, 230)  # Pale blue color
 RED = (255, 0, 0)  # Red border
+GREEN = (0, 200, 0)
 DARK_BLUE = (0, 0, 130)  # Dark blue for player path
 BLACK = (0, 0, 0)
-BLUE = (0, 0, 220)
+BLUE = (0, 0, 200)
 
 # Set up the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -186,9 +187,9 @@ while running:
 
     # Draw used paths with dark blue
     for path in used_paths:
-        pygame.draw.line(screen, DARK_BLUE, path[0], path[1], 3)
+        pygame.draw.line(screen, DARK_BLUE, path[0], path[1], 2)
     for path in used_paths_1:
-        pygame.draw.line(screen, BLUE, path[0], path[1], 3)
+        pygame.draw.line(screen, GREEN, path[0], path[1], 3)
     for path in used_paths_2:
         pygame.draw.line(screen, BLACK, path[0], path[1], 3)
 
