@@ -19,12 +19,12 @@ def game_body():
     x = 4
     y = 6
     BORDER_SIZE = 70
-    GRID_SIZE = 73
+    GRID_SIZE = 55
     GRID_WIDTH = 2 * x * GRID_SIZE
     GRID_HEIGHT = 2 * y * GRID_SIZE
     WIDTH, HEIGHT = GRID_WIDTH + 2 * BORDER_SIZE, GRID_HEIGHT + 2 * BORDER_SIZE
 
-    FPS = 30
+    FPS = 144
 
     # Colors
     WHITE = (225, 225, 255)
@@ -42,7 +42,7 @@ def game_body():
     title_bar_surface.fill(RED)
 
     # Player starting position
-    player_pos = [x * GRID_SIZE + BORDER_SIZE, y * GRID_SIZE + BORDER_SIZE]
+    ball_position = [x * GRID_SIZE + BORDER_SIZE, y * GRID_SIZE + BORDER_SIZE]
     used_paths = []
     used_paths_player1 = []
     used_paths_player2 = []
@@ -172,42 +172,40 @@ def game_body():
                 ):
                     if first_player:
                         new_pos = [
-                            player_pos[0] + directions[key][0],
-                            player_pos[1] + directions[key][1],
+                            ball_position[0] + directions[key][0],
+                            ball_position[1] + directions[key][1],
                         ]
                     else:
                         new_pos = [
-                            player_pos[0] + directions2[key][0],
-                            player_pos[1] + directions2[key][1],
+                            ball_position[0] + directions2[key][0],
+                            ball_position[1] + directions2[key][1],
                         ]
 
                     # Check if the new position is within bounds and not already used
                     if (
                         BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE
                         and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE
-                        and (player_pos, new_pos) not in used_paths
-                        and (new_pos, player_pos) not in used_paths
+                        and (ball_position, new_pos) not in used_paths
+                        and (new_pos, ball_position) not in used_paths
                     ):
-
+                        #   check if move ended on free spot, if so, switch player
                         change = False
                         if not any(new_pos in path for path in used_paths):
                             change = True
-
+                        # separate paths for playes 1/2
                         if first_player:
-                            used_paths_player1.append((player_pos, new_pos))
+                            used_paths_player1.append((ball_position, new_pos))
                         elif not first_player:
-                            used_paths_player2.append((player_pos, new_pos))
+                            used_paths_player2.append((ball_position, new_pos))
 
-                        used_paths.append((player_pos, new_pos))
-
+                        used_paths.append((ball_position, new_pos))
                         play_sound("kick")
 
-                        # Check if the new position is already part of the path
                         if change:
                             first_player = not first_player
 
                         change = False
-                        player_pos = new_pos
+                        ball_position = new_pos
 
         # Clear the screen
         screen.fill(WHITE)
@@ -226,7 +224,7 @@ def game_body():
             pygame.draw.line(screen, BLUE, path[0], path[1], 3)
 
         # Draw player with black circle
-        pygame.draw.circle(screen, BLACK, player_pos, GRID_SIZE // 5)
+        pygame.draw.circle(screen, BLACK, ball_position, GRID_SIZE // 5)
 
         # Update the display
         pygame.display.flip()
