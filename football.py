@@ -47,6 +47,7 @@ def game_body():
     used_paths_player1 = []
     used_paths_player2 = []
 
+    font1 = pygame.font.SysFont("Arial", 36)
     img = pygame.image.load("ball.png")
     img = pygame.transform.scale(img, (GRID_SIZE * 0.5, GRID_SIZE * 0.5))
     # Turn
@@ -225,12 +226,30 @@ def game_body():
         for path in used_paths_player2:
             pygame.draw.line(screen, BLUE, path[0], path[1], 3)
 
-        # Draw player with black circle
-        pygame.draw.circle(screen, DARK_GREY, ball_position, GRID_SIZE // 5)
+        # Draw ball with black circle or image
+        # pygame.draw.circle(screen, DARK_GREY, ball_position, GRID_SIZE // 5)
 
         rect = img.get_rect()
         rect.center = ball_position
         screen.blit(img, rect)
+
+        # text on screen
+        # font1.bold = True
+        font1.italic = True
+        p1_text = font1.render("Player 1", 36, GREEN)
+        p2_text = font1.render("Player 2", 36, BLUE)
+
+        screen.blit(
+            p1_text,
+            (WIDTH // 2 + GRID_SIZE * 1.5, HEIGHT - BORDER_SIZE - GRID_SIZE * 0.8),
+        )
+        screen.blit(
+            p2_text,
+            (
+                WIDTH // 2 - GRID_SIZE * 1.5 - p2_text.get_width(),
+                BORDER_SIZE + GRID_SIZE - GRID_SIZE * 0.8,
+            ),
+        )
 
         # Update the display
         pygame.display.flip()
