@@ -81,7 +81,6 @@ def game_body():
     }
 
     def win_condition(position):
-        print(position)
         if position[1] == BORDER_SIZE and (
             position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE
             or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
@@ -337,7 +336,13 @@ def game_body():
             )
         if second_player_won:
             victory_text = victory_font.render("Player 2 WON!", 36, RED)
-            screen.blit(victory_text, (WIDTH // 2, HEIGHT // 2))
+            screen.blit(
+                victory_text,
+                (
+                    WIDTH // 2 - victory_text.get_width() // 2,
+                    HEIGHT // 2 - victory_text.get_height(),
+                ),
+            )
 
         screen.blit(
             p1_text,
