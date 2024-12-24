@@ -46,12 +46,16 @@ def game_body():
     used_paths = []
     used_paths_player1 = []
     used_paths_player2 = []
+    invisible_paths = []
 
     font1 = pygame.font.SysFont("Arial", 36)
+    victory_font = pygame.font.SysFont("Arial", 72)
     img = pygame.image.load("ball.png")
     img = pygame.transform.scale(img, (GRID_SIZE * 0.5, GRID_SIZE * 0.5))
     # Turn
     first_player = True
+    first_player_won = False
+    second_player_won = False
 
     # Directions for Q, W, E, A, D, Z, X, C
     directions = {
@@ -75,6 +79,25 @@ def game_body():
         ".": (0, GRID_SIZE),
         "/": (GRID_SIZE, GRID_SIZE),
     }
+
+    def win_condition(position):
+        print(position)
+        if position[1] == BORDER_SIZE and (
+            position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE
+            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
+            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE + GRID_SIZE
+        ):
+            print("YES")
+            return "first"
+        elif position[1] == BORDER_SIZE + GRID_HEIGHT and (
+            position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE
+            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
+            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE + GRID_SIZE
+        ):
+            print("YES!")
+            return "second"
+        else:
+            return "in progress"
 
     # Main game loop
     clock = pygame.time.Clock()
@@ -105,8 +128,18 @@ def game_body():
     ):
         startpos = [i, BORDER_SIZE + GRID_SIZE]
         endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
+        endpos2 = [i + GRID_SIZE, BORDER_SIZE]
+        endpos3 = [i, BORDER_SIZE]
+        startpos2 = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
+        used_paths.append((startpos, endpos2))
+        used_paths.append((startpos, endpos3))
+        used_paths.append((startpos2, endpos3))
+        invisible_paths.append((startpos, endpos2))
+        invisible_paths.append((startpos, endpos3))
+        invisible_paths.append((startpos2, endpos3))
+
     for i in range(
         int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
         GRID_WIDTH + BORDER_SIZE,
@@ -114,16 +147,36 @@ def game_body():
     ):
         startpos = [i, BORDER_SIZE + GRID_SIZE]
         endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
+        endpos2 = [i + GRID_SIZE, BORDER_SIZE]
+        startpos2 = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
+        endpos3 = [i, BORDER_SIZE]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
+        used_paths.append((startpos, endpos2))
+        used_paths.append((startpos2, endpos2))
+        used_paths.append((startpos2, endpos3))
+        invisible_paths.append((startpos, endpos2))
+        invisible_paths.append((startpos2, endpos2))
+        invisible_paths.append((startpos2, endpos3))
+
     # bottom lines
     for i in range(
         BORDER_SIZE, int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE, GRID_SIZE
     ):
         startpos = [i, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
         endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
+        endpos2 = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE]
+        endpos3 = [i, GRID_HEIGHT + BORDER_SIZE]
+        startpos2 = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
+        used_paths.append((startpos, endpos2))
+        used_paths.append((startpos, endpos3))
+        used_paths.append((startpos2, endpos3))
+        invisible_paths.append((startpos, endpos2))
+        invisible_paths.append((startpos, endpos3))
+        invisible_paths.append((startpos2, endpos3))
+
     for i in range(
         int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
         GRID_WIDTH + BORDER_SIZE,
@@ -131,8 +184,18 @@ def game_body():
     ):
         startpos = [i, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
         endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
+        endpos2 = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE]
+        startpos2 = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
+        endpos3 = [i, GRID_HEIGHT + BORDER_SIZE]
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
+        used_paths.append((startpos, endpos2))
+        used_paths.append((startpos2, endpos2))
+        used_paths.append((startpos2, endpos3))
+        invisible_paths.append((startpos, endpos2))
+        invisible_paths.append((startpos2, endpos2))
+        invisible_paths.append((startpos2, endpos3))
+
     # top goal
     startpos = [int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, BORDER_SIZE]
     endpos = [int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, BORDER_SIZE + GRID_SIZE]
@@ -203,6 +266,10 @@ def game_body():
 
                         used_paths.append((ball_position, new_pos))
                         play_sound("kick")
+                        if win_condition(new_pos) == "first":
+                            first_player_won = True
+                        elif win_condition(new_pos) == "second":
+                            second_player_won = True
 
                         if change:
                             first_player = not first_player
@@ -225,6 +292,8 @@ def game_body():
             pygame.draw.line(screen, GREEN, path[0], path[1], 3)
         for path in used_paths_player2:
             pygame.draw.line(screen, BLUE, path[0], path[1], 3)
+        for path in invisible_paths:
+            pygame.draw.line(screen, WHITE, path[0], path[1], 3)
 
         # Draw ball with black circle or image
         # pygame.draw.circle(screen, DARK_GREY, ball_position, GRID_SIZE // 5)
@@ -238,6 +307,18 @@ def game_body():
         font1.italic = True
         p1_text = font1.render("Player 1", 36, GREEN)
         p2_text = font1.render("Player 2", 36, BLUE)
+        if first_player_won:
+            victory_text = victory_font.render("Player 1 WON!", 36, RED)
+            screen.blit(
+                victory_text,
+                (
+                    WIDTH // 2 - victory_text.get_width() // 2,
+                    HEIGHT // 2 - victory_text.get_height(),
+                ),
+            )
+        if second_player_won:
+            victory_text = victory_font.render("Player 2 WON!", 36, RED)
+            screen.blit(victory_text, (WIDTH // 2, HEIGHT // 2))
 
         screen.blit(
             p1_text,
