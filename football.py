@@ -123,6 +123,11 @@ def game_body():
         used_paths.append((startpos, endpos))
 
     # Draw top lines
+    for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
+        startpos = [i, BORDER_SIZE]
+        endpos = [i + GRID_SIZE, BORDER_SIZE]
+        used_paths.append((startpos, endpos))
+        invisible_paths.append((startpos, endpos))
     for i in range(
         BORDER_SIZE, BORDER_SIZE + int(GRID_WIDTH / 2) - GRID_SIZE, GRID_SIZE
     ):
@@ -160,6 +165,11 @@ def game_body():
         invisible_paths.append((startpos2, endpos3))
 
     # bottom lines
+    for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
+        startpos = [i, GRID_HEIGHT + BORDER_SIZE]
+        endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE]
+        used_paths.append((startpos, endpos))
+        invisible_paths.append((startpos, endpos))
     for i in range(
         BORDER_SIZE, int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE, GRID_SIZE
     ):
@@ -233,6 +243,13 @@ def game_body():
                 running = False
             elif event.type == pygame.KEYUP:
                 key = pygame.key.name(event.key).lower()
+                if event.key == pygame.K_ESCAPE:
+                    print("quit")
+                    running = False
+                    sys.exit()
+                if event.key == pygame.K_F5:
+                    print("RESTART")
+                    game_body()
                 if (key in directions and first_player == True) or (
                     key in directions2 and first_player == False
                 ):
@@ -276,6 +293,8 @@ def game_body():
 
                         change = False
                         ball_position = new_pos
+        if not running:
+            return
 
         # Clear the screen
         screen.fill(WHITE)
