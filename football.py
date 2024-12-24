@@ -98,6 +98,25 @@ def game_body():
         else:
             return "in progress"
 
+    def blocked():
+        def check_move(new_pos):
+            if (
+                BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE
+                and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE
+                and (ball_position, new_pos) not in used_paths
+                and (new_pos, ball_position) not in used_paths
+            ):
+                return False
+            return True
+
+        new_pos = ball_position + [-GRID_SIZE, -GRID_SIZE]
+        if check_move(new_pos):
+            print("block")
+            return False
+        new_pos = ball_position + [-GRID_SIZE, -GRID_SIZE]
+        if check_move(new_pos):
+            return False
+
     # Main game loop
     clock = pygame.time.Clock()
     running = True
@@ -313,6 +332,8 @@ def game_body():
         for path in invisible_paths:
             pygame.draw.line(screen, WHITE, path[0], path[1], 3)
 
+        if blocked():
+            print("blocked")
         # Draw ball with black circle or image
         # pygame.draw.circle(screen, DARK_GREY, ball_position, GRID_SIZE // 5)
 
