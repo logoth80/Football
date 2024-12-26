@@ -86,14 +86,12 @@ def game_body():
             or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
             or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE + GRID_SIZE
         ):
-            print("YES")
             return "first"
         elif position[1] == BORDER_SIZE + GRID_HEIGHT and (
             position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE
             or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
             or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE + GRID_SIZE
         ):
-            print("YES!")
             return "second"
         else:
             return "in progress"
@@ -106,8 +104,6 @@ def game_body():
                 and (ball_position, new_temp_pos) not in used_paths
                 and (new_temp_pos, ball_position) not in used_paths
             ):
-                # print("ok")
-                print(new_temp_pos, ball_position)
                 return False
             return True
 
@@ -136,8 +132,6 @@ def game_body():
         new_pos = [ball_position[0] + GRID_SIZE, ball_position[1] + GRID_SIZE]
         if cant_move(new_pos):
             directions_available = directions_available - 1
-
-        print(directions_available)
         return directions_available
 
     # Main game loop
@@ -277,6 +271,7 @@ def game_body():
     ]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
     used_paths.append((startpos, endpos))
+    global restarting_loop
 
     while running:
         for event in pygame.event.get():
@@ -286,11 +281,14 @@ def game_body():
                 key = pygame.key.name(event.key).lower()
                 if event.key == pygame.K_ESCAPE:
                     print("quit")
+                    restarting_loop = False
                     running = False
-                    sys.exit()
+                    # sys.exit()
                 if event.key == pygame.K_F5:
                     print("RESTART")
-                    game_body()
+                    running = False
+                    # sys.exit()
+                    # game_body()
                 if (key in directions and first_player == True) or (
                     key in directions2 and first_player == False
                 ):
@@ -345,6 +343,7 @@ def game_body():
                         change = False
 
         if not running:
+            pygame.quit()
             return
 
         # Clear the screen
@@ -417,5 +416,11 @@ def game_body():
     pygame.quit()
 
 
-game_body()
+global restarting_loop
+restarting_loop = True
+while restarting_loop:
+    print("start")
+    game_body()
+    print(restarting_loop)
+
 sys.exit()
