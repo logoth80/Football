@@ -371,12 +371,13 @@ def game_body():
         p2_text = player_font.render("Player 2", 36, BLUE)
         info_text = info_font.render(f"ESC to quit", 20, PALE_BLUE)
         screen.blit(
-            info_text, (BORDER_SIZE, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4)
+            info_text,
+            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4),
         )
         info_text = info_font.render(f"F5 to restart", 20, PALE_BLUE)
         screen.blit(
             info_text,
-            (BORDER_SIZE, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 20),
+            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 20),
         )
 
         if first_player_won:
