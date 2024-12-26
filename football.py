@@ -99,23 +99,46 @@ def game_body():
             return "in progress"
 
     def blocked():
-        def check_move(new_pos):
+        def cant_move(new_temp_pos):
             if (
-                BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE
-                and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE
-                and (ball_position, new_pos) not in used_paths
-                and (new_pos, ball_position) not in used_paths
+                BORDER_SIZE <= new_temp_pos[0] <= GRID_WIDTH + BORDER_SIZE
+                and BORDER_SIZE <= new_temp_pos[1] <= GRID_HEIGHT + BORDER_SIZE
+                and (ball_position, new_temp_pos) not in used_paths
+                and (new_temp_pos, ball_position) not in used_paths
             ):
+                # print("ok")
+                print(new_temp_pos, ball_position)
                 return False
             return True
 
-        new_pos = ball_position + [-GRID_SIZE, -GRID_SIZE]
-        if check_move(new_pos):
-            print("block")
-            return False
-        new_pos = ball_position + [-GRID_SIZE, -GRID_SIZE]
-        if check_move(new_pos):
-            return False
+        directions_available = 8
+        new_pos = [ball_position[0] - GRID_SIZE, ball_position[1] - GRID_SIZE]
+        if cant_move(new_pos):
+            directions_available = directions_available - 1
+        new_pos = [ball_position[0], ball_position[1] - GRID_SIZE]
+        if cant_move(new_pos):
+            directions_available = directions_available - 1
+        new_pos = [ball_position[0] + GRID_SIZE, ball_position[1] - GRID_SIZE]
+        if cant_move(new_pos):
+            directions_available = directions_available - 1
+        new_pos = [ball_position[0] - GRID_SIZE, ball_position[1]]
+        if cant_move(new_pos):
+            directions_available = directions_available - 1
+        new_pos = [ball_position[0] + GRID_SIZE, ball_position[1]]
+        if cant_move(new_pos):
+            directions_available = directions_available - 1
+        new_pos = [ball_position[0] - GRID_SIZE, ball_position[1] + GRID_SIZE]
+        if cant_move(new_pos):
+            directions_available = directions_available - 1
+        new_pos = [ball_position[0], ball_position[1] + GRID_SIZE]
+        if cant_move(new_pos):
+            directions_available = directions_available - 1
+        new_pos = [ball_position[0] + GRID_SIZE, ball_position[1] + GRID_SIZE]
+        if cant_move(new_pos):
+            directions_available = directions_available - 1
+
+        print(directions_available)
+        return directions_available
 
     # Main game loop
     clock = pygame.time.Clock()
@@ -309,8 +332,18 @@ def game_body():
                         if change:
                             first_player = not first_player
 
-                        change = False
                         ball_position = new_pos
+                        if blocked() == 0:
+                            print("blocked")
+                            if first_player:
+                                print("player 2 won")
+                                second_player_won = True
+                            else:
+                                print("player 1 won")
+                                first_player_won = True
+
+                        change = False
+
         if not running:
             return
 
@@ -331,9 +364,6 @@ def game_body():
             pygame.draw.line(screen, BLUE, path[0], path[1], 3)
         for path in invisible_paths:
             pygame.draw.line(screen, WHITE, path[0], path[1], 3)
-
-        if blocked():
-            print("blocked")
         # Draw ball with black circle or image
         # pygame.draw.circle(screen, DARK_GREY, ball_position, GRID_SIZE // 5)
 
