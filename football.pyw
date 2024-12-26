@@ -27,33 +27,29 @@ def game_body():
 
     FPS = 144
 
-    # Colors
     WHITE = (225, 225, 255)
-    PALE_BLUE = (160, 200, 230)  # Pale blue color
-    RED = (255, 0, 0)  # Red border
+    PALE_BLUE = (160, 200, 230)
+    RED = (255, 0, 0)
     GREEN = (0, 130, 0)
-    DARK_BLUE = (30, 0, 130)  # Dark blue for player path
+    DARK_BLUE = (30, 0, 130)
     BLACK = (0, 0, 0)
     BLUE = (0, 0, 200)
     DARK_GREY = (100, 100, 100)
 
-    # Set up the display
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Football")
 
-    # Player starting position
     ball_position = [x * GRID_SIZE + BORDER_SIZE, y * GRID_SIZE + BORDER_SIZE]
     used_paths = []
-    used_paths_player1 = []
-    used_paths_player2 = []
-    invisible_paths = []
+    used_paths_player1 = []  # to color only
+    used_paths_player2 = []  # to color only
+    invisible_paths = []  # eraser (visual only)
 
     font1 = pygame.font.SysFont("Arial", 36)
     victory_font = pygame.font.SysFont("Arial", 72)
     img = pygame.image.load("ball.png")
     img = pygame.transform.scale(img, (GRID_SIZE * 0.5, GRID_SIZE * 0.5))
-    # Turn
-    first_player = True
+    first_player = True  # Turn
     first_player_won = False
     second_player_won = False
 
@@ -68,7 +64,7 @@ def game_body():
         "x": (0, GRID_SIZE),
         "c": (GRID_SIZE, GRID_SIZE),
     }
-    # Directions for Q, W, E, A, D, Z, X, C
+    # Directions for I, O, P, K, ";", ",", ".", "/"
     directions2 = {
         "i": (-GRID_SIZE, -GRID_SIZE),
         "o": (0, -GRID_SIZE),
@@ -138,6 +134,9 @@ def game_body():
     clock = pygame.time.Clock()
     running = True
 
+    # used_paths bloks moves and provides extra move
+    # invisible_paths hides used_paths
+
     # Draw side lines
     for i in range(GRID_SIZE, GRID_HEIGHT - GRID_SIZE, GRID_SIZE):
         startpos = [BORDER_SIZE, i + BORDER_SIZE]
@@ -157,7 +156,7 @@ def game_body():
         pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
         used_paths.append((startpos, endpos))
 
-    # Draw top lines
+    # Draw top lines, including all blocked outside
     for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
         startpos = [i, BORDER_SIZE]
         endpos = [i + GRID_SIZE, BORDER_SIZE]
@@ -199,7 +198,7 @@ def game_body():
         invisible_paths.append((startpos2, endpos2))
         invisible_paths.append((startpos2, endpos3))
 
-    # bottom lines
+    # bottom lines, including all invisible blocked outs
     for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
         startpos = [i, GRID_HEIGHT + BORDER_SIZE]
         endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE]
@@ -310,7 +309,7 @@ def game_body():
                         change = False
                         if not any(new_pos in path for path in used_paths):
                             change = True
-                        # separate paths for playes 1/2
+                        # separate paths for playes 1/2 for recoloring only
                         if first_player:
                             used_paths_player1.append((ball_position, new_pos))
                         elif not first_player:
@@ -328,12 +327,9 @@ def game_body():
 
                         ball_position = new_pos
                         if blocked() == 0:
-                            print("blocked")
                             if first_player:
-                                print("player 2 won")
                                 second_player_won = True
                             else:
-                                print("player 1 won")
                                 first_player_won = True
 
                         change = False
@@ -351,13 +347,13 @@ def game_body():
             pygame.draw.line(screen, PALE_BLUE, (0, y), (WIDTH, y))
 
         # Draw used paths
-        for path in used_paths:
+        for path in used_paths:  # all blocked, lines/goals/moves
             pygame.draw.line(screen, DARK_BLUE, path[0], path[1], 2)
         for path in used_paths_player1:
             pygame.draw.line(screen, GREEN, path[0], path[1], 3)
         for path in used_paths_player2:
             pygame.draw.line(screen, BLUE, path[0], path[1], 3)
-        for path in invisible_paths:
+        for path in invisible_paths:  # paint over with white
             pygame.draw.line(screen, WHITE, path[0], path[1], 3)
         # Draw ball with black circle or image
         # pygame.draw.circle(screen, DARK_GREY, ball_position, GRID_SIZE // 5)
@@ -366,8 +362,7 @@ def game_body():
         rect.center = ball_position
         screen.blit(img, rect)
 
-        # text on screen
-        # font1.bold = True
+        font1.bold = True
         font1.italic = True
         p1_text = font1.render("Player 1", 36, GREEN)
         p2_text = font1.render("Player 2", 36, BLUE)
@@ -401,14 +396,9 @@ def game_body():
                 BORDER_SIZE + GRID_SIZE - GRID_SIZE * 0.8,
             ),
         )
-
-        # Update the display
         pygame.display.flip()
-
-        # Cap the frame rate
         clock.tick(FPS)
 
-    # Quit Pygame
     pygame.quit()
 
 
