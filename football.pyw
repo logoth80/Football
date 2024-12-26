@@ -45,8 +45,10 @@ def game_body():
     used_paths_player2 = []  # to color only
     invisible_paths = []  # eraser (visual only)
 
-    font1 = pygame.font.SysFont("Arial", 36)
-    victory_font = pygame.font.SysFont("Arial", 72)
+    player_font = pygame.font.SysFont("Georgia", 36)
+    victory_font = pygame.font.SysFont("Cambria", 72)
+    info_font = pygame.font.SysFont("Ariel", 20)
+
     img = pygame.image.load("ball.png")
     img = pygame.transform.scale(img, (GRID_SIZE * 0.5, GRID_SIZE * 0.5))
     first_player = True  # Turn
@@ -362,10 +364,21 @@ def game_body():
         rect.center = ball_position
         screen.blit(img, rect)
 
-        font1.bold = True
-        font1.italic = True
-        p1_text = font1.render("Player 1", 36, GREEN)
-        p2_text = font1.render("Player 2", 36, BLUE)
+        player_font.bold = True
+        player_font.italic = True
+        victory_font.bold = True
+        p1_text = player_font.render("Player 1", 36, GREEN)
+        p2_text = player_font.render("Player 2", 36, BLUE)
+        info_text = info_font.render(f"ESC to quit", 20, PALE_BLUE)
+        screen.blit(
+            info_text, (BORDER_SIZE, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4)
+        )
+        info_text = info_font.render(f"F5 to restart", 20, PALE_BLUE)
+        screen.blit(
+            info_text,
+            (BORDER_SIZE, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 20),
+        )
+
         if first_player_won:
             victory_text = victory_font.render("Player 1 WON!", 36, RED)
             screen.blit(
