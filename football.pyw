@@ -276,19 +276,15 @@ def game_body():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                restarting_loop = False
                 running = False
             elif event.type == pygame.KEYUP:
                 key = pygame.key.name(event.key).lower()
                 if event.key == pygame.K_ESCAPE:
-                    print("quit")
                     restarting_loop = False
                     running = False
-                    # sys.exit()
                 if event.key == pygame.K_F5:
-                    print("RESTART")
                     running = False
-                    # sys.exit()
-                    # game_body()
                 if (key in directions and first_player == True) or (
                     key in directions2 and first_player == False
                 ):
