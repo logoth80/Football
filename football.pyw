@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import math
 
 
 def play_sound(what_sound):
@@ -94,17 +95,17 @@ def game_body():
         else:
             return "in progress"
 
-    def blocked():
-        def cant_move(new_temp_pos):
-            if (
-                BORDER_SIZE <= new_temp_pos[0] <= GRID_WIDTH + BORDER_SIZE
-                and BORDER_SIZE <= new_temp_pos[1] <= GRID_HEIGHT + BORDER_SIZE
-                and (ball_position, new_temp_pos) not in used_paths
-                and (new_temp_pos, ball_position) not in used_paths
-            ):
-                return False
-            return True
+    def cant_move(new_temp_pos):
+        if (
+            BORDER_SIZE <= new_temp_pos[0] <= GRID_WIDTH + BORDER_SIZE
+            and BORDER_SIZE <= new_temp_pos[1] <= GRID_HEIGHT + BORDER_SIZE
+            and (ball_position, new_temp_pos) not in used_paths
+            and (new_temp_pos, ball_position) not in used_paths
+        ):
+            return False
+        return True
 
+    def blocked():
         directions_available = 8
         new_pos = [ball_position[0] - GRID_SIZE, ball_position[1] - GRID_SIZE]
         if cant_move(new_pos):
@@ -272,8 +273,20 @@ def game_body():
     ]
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
     used_paths.append((startpos, endpos))
-    global restarting_loop
 
+    def findbestpath():
+        alldirections = [
+            (-GRID_SIZE, -GRID_SIZE),
+            (0, -GRID_SIZE),
+            (GRID_SIZE, -GRID_SIZE),
+            (GRID_SIZE, 0),
+            (GRID_SIZE, GRID_SIZE),
+            (0, GRID_SIZE),
+            (-GRID_SIZE, GRID_SIZE),
+            (-GRID_SIZE, 0),
+        ]
+
+    global restarting_loop
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -284,6 +297,8 @@ def game_body():
                 if event.key == pygame.K_ESCAPE:
                     restarting_loop = False
                     running = False
+                if event.key == pygame.K_F3:
+                    findbestpath()
                 if event.key == pygame.K_F5:
                     running = False
                 if (key in directions and first_player == True) or (
