@@ -4,6 +4,91 @@ import random
 import math
 
 
+def calculate_best_move(
+    ball_position,
+    directions,
+    used_paths,
+    BORDER_SIZE,
+    GRID_WIDTH,
+    GRID_HEIGHT,
+    GRID_SIZE,
+    opponent_directions,
+):
+    def is_valid_move(current_position, new_pos, prev_direction, path):
+        """Check if a move is valid."""
+        return (
+            BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE
+            and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE
+            and (current_position, new_pos) not in used_paths
+            and (new_pos, current_position) not in used_paths
+            and new_pos != prev_direction  # Prevent backtracking
+            and (current_position, new_pos) not in path
+            and (new_pos, current_position) not in path
+        )
+
+    def simulate_move(position, directions, initial_direction):
+        """Simulate moves with the ability to continue on used paths."""
+        path = []
+        current_pos = position
+        last_direction = initial_direction
+        while True:
+            found_path = False
+            for key, direction in directions.items():
+                next_pos = [
+                    current_pos[0] + direction[0],
+                    current_pos[1] + direction[1],
+                ]
+                if is_valid_move(current_pos, next_pos, last_direction, path):
+                    path.append((current_pos, next_pos))
+                    current_pos = next_pos
+                    last_direction = (
+                        -direction[0],
+                        -direction[1],
+                    )  # Track the opposite
+                    found_path = True
+                    break
+            if not found_path:  # No valid paths to continue
+                break
+        return path, current_pos
+
+    def distance_to_goal(position, goal_y):
+        """Calculate Manhattan distance to goal."""
+        return abs(position[1] - goal_y)
+
+    # Opponent's goal is at the bottom
+    north_goal_y = BORDER_SIZE
+    south_goal_y = BORDER_SIZE + GRID_HEIGHT
+
+    best_move = None
+    best_score = float("inf")  # Lower scores are better
+
+    for direction_key, direction in directions.items():
+        simulated_path, new_position = simulate_move(
+            ball_position, directions, direction
+        )
+
+        # If we can score directly, it's the best move
+        if new_position[1] == north_goal_y:
+            return simulated_path
+
+        # Simulate opponent's response
+        worst_opponent_score = float("-inf")
+        for opp_key, opp_direction in opponent_directions.items():
+            _, opp_new_position = simulate_move(
+                new_position, opponent_directions, opp_direction
+            )
+            opponent_score = distance_to_goal(opp_new_position, south_goal_y)
+            worst_opponent_score = max(worst_opponent_score, opponent_score)
+
+        # Evaluate this move
+        move_score = worst_opponent_score
+        if move_score < best_score:
+            best_score = move_score
+            best_move = simulated_path
+
+    return best_move
+
+
 def play_sound(what_sound):
     if what_sound == "kick":
         kicks = ["kick (1).wav", "kick (2).wav", "kick (3).wav"]
@@ -326,7 +411,7 @@ def game_body():
                     print(all_paths, " appending path")
                     if not stop_move(new_pos):
                         print("not stopping")
-                        explore_path(new_pos, path)  # + [(new_pos)])
+                        explore_path(new_pos, pathtest)  # + [(new_pos)])
 
         # Start exploring paths from the current position
         explore_path(current_pos, [current_pos])
@@ -346,7 +431,19 @@ def game_body():
                     restarting_loop = False
                     running = False
                 if event.key == pygame.K_F3:
-                    move_ai(findbestpath(ball_position), ball_position)
+                    used_paths = used_paths + (
+                        calculate_best_move(
+                            ball_position,
+                            directions,
+                            used_paths,
+                            BORDER_SIZE,
+                            GRID_WIDTH,
+                            GRID_HEIGHT,
+                            GRID_SIZE,
+                            directions2,
+                        )
+                    )
+                    # move_ai(findbestpath(ball_position), ball_position)
                 if event.key == pygame.K_F5:
                     running = False
                 if (key in directions and first_player == True) or (
