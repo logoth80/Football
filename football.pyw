@@ -95,6 +95,18 @@ def game_body():
         else:
             return "in progress"
 
+    def stop_move(new_pos):
+        if not any(new_pos in path for path in used_paths):
+            return True
+
+    def is_valid_move(current_position, new_pos):
+        return (
+            BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE
+            and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE
+            and (current_position, new_pos) not in used_paths
+            and (new_pos, current_position) not in used_paths
+        )
+
     def cant_move(new_temp_pos):
         if (
             BORDER_SIZE <= new_temp_pos[0] <= GRID_WIDTH + BORDER_SIZE
@@ -132,6 +144,19 @@ def game_body():
         if cant_move(new_pos):
             directions_available = directions_available - 1
         return directions_available
+
+    def move_ai(list_of_moves, ball_position):
+        for dire in list_of_moves:
+            return
+            print(f"direction: {dire} bp: {ball_position} {list_of_moves}")
+            # startpos = (ball_position[0], ball_position[1])
+            # new_pos = (ball_position[0] + dire[0], ball_position[1] + dire[1])
+            # if not cant_move(new_pos):
+            #    return new_pos
+            # used_paths.append((startpos, new_pos))
+            # ball_position[0] = new_pos[0]
+            # ball_position[1] = new_pos[1]
+        return
 
     # Main game loop
     clock = pygame.time.Clock()
@@ -274,17 +299,40 @@ def game_body():
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
     used_paths.append((startpos, endpos))
 
-    def findbestpath():
-        alldirections = [
-            (-GRID_SIZE, -GRID_SIZE),
-            (0, -GRID_SIZE),
-            (GRID_SIZE, -GRID_SIZE),
-            (GRID_SIZE, 0),
-            (GRID_SIZE, GRID_SIZE),
-            (0, GRID_SIZE),
-            (-GRID_SIZE, GRID_SIZE),
-            (-GRID_SIZE, 0),
-        ]
+    def findbestpath(current_pos):
+        all_paths = []
+        pathtest = []
+        bestdistance = 999999999
+
+        def explore_path(current_pos, path):
+            if len(path) > 200:  # Limit the depth of recursion to avoid infinite loops
+                return
+
+            # all_paths.append(current_pos)
+
+            for key in directions:
+                # print(path)
+                new_pos = [
+                    current_pos[0] + directions[key][0],
+                    current_pos[1] + directions[key][1],
+                ]
+                if (
+                    is_valid_move(current_pos, new_pos)
+                    and (current_pos, new_pos) not in all_paths
+                    and (new_pos, current_pos) not in all_paths
+                ):
+                    all_paths.append((current_pos, new_pos))
+                    pathtest.append(directions[key])
+                    print(all_paths, " appending path")
+                    if not stop_move(new_pos):
+                        print("not stopping")
+                        explore_path(new_pos, path)  # + [(new_pos)])
+
+        # Start exploring paths from the current position
+        explore_path(current_pos, [current_pos])
+        print(" paths found: ", len(all_paths))
+        return all_paths
+        # end AI
 
     global restarting_loop
     while running:
@@ -298,7 +346,7 @@ def game_body():
                     restarting_loop = False
                     running = False
                 if event.key == pygame.K_F3:
-                    findbestpath()
+                    move_ai(findbestpath(ball_position), ball_position)
                 if event.key == pygame.K_F5:
                     running = False
                 if (key in directions and first_player == True) or (
