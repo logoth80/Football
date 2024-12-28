@@ -25,6 +25,10 @@ def calculate_best_move(
             and (new_pos, current_position) not in path
         )
 
+    def bounce(new_pos):
+        if any(new_pos in path for path in used_paths):
+            return True
+
     def simulate_move(position, directions, initial_direction):
         """Simulate moves with the ability to continue on used paths."""
         return
@@ -44,10 +48,20 @@ def calculate_best_move(
     current_position = ball_position
     tested_path = []
     for direction_key, direction in directions.items():
-        new_pos = current_position[0] + direction[0], current_position[1] + direction[1]
-        print(f"testing {current_position} to {new_pos}")
+        new_pos = [
+            current_position[0] + direction[0],
+            current_position[1] + direction[1],
+        ]
+        # print(f"testing {current_position} to {new_pos}")
         if is_valid_move(current_position, new_pos, tested_path):
-            print("possible")
+            tested_path.append([current_position, new_pos])
+            if bounce(new_pos):
+                print("continue deeper")
+            else:
+                print(
+                    f"{current_position} to {new_pos} in {tested_path} is possible and stopped"
+                )
+
         # If we can score directly, it's the best move
 
     return best_move
