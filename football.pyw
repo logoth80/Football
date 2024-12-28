@@ -35,9 +35,10 @@ def calculate_best_move(
 
     def distance_to_goal(position):
         """Calculate Manhattan distance to goal."""
-        distancey = abs(position[1] - (BORDER_SIZE))
-        distancex = abs(position[0] - (GRID_WIDTH / 2) * (GRID_SIZE))
+        distancey = abs(position[1] - (BORDER_SIZE + GRID_HEIGHT))
+        distancex = abs(position[0] - (GRID_WIDTH // 2 + BORDER_SIZE))
         distance = distancex * distancex + distancey * distancey
+        # distance = math.sqrt(distance)
         return distance
 
     # Opponent's goal is at the bottom
@@ -57,52 +58,67 @@ def calculate_best_move(
         if is_valid_move(current_position, new_pos, tested_path):
             tested_path.append((current_position, new_pos))
             if bounce(new_pos):
-                print("continue deeper")
-                for direction_key, direction in directions.items():
-                    print("testing cont from: ", new_pos)
+                # print("continue deeper")
+                for direction_key, direction2 in directions.items():
                     new_pos2 = [
-                        new_pos[0] + direction[0],
-                        new_pos[1] + direction[1],
+                        new_pos[0] + direction2[0],
+                        new_pos[1] + direction2[1],
                     ]
                     # print(f"testing {current_position} to {new_pos}")
                     if is_valid_move(new_pos, new_pos2, tested_path):
                         tested_path.append((new_pos, new_pos2))
                         if bounce(new_pos2):
-                            print("continue deeper")
-                            for direction_key, direction in directions.items():
+                            # print("continue deeper")
+                            for direction_key, direction3 in directions.items():
                                 new_pos3 = [
-                                    new_pos2[0] + direction[0],
-                                    new_pos2[1] + direction[1],
+                                    new_pos2[0] + direction3[0],
+                                    new_pos2[1] + direction3[1],
                                 ]
                                 # print(f"testing {current_position} to {new_pos}")
                                 if is_valid_move(new_pos2, new_pos3, tested_path):
                                     tested_path.append((new_pos2, new_pos3))
                                     if bounce(new_pos3):
-                                        print("continue deeper")
+                                        print(
+                                            f"continue deeper: {direction}, {direction2}, {direction3}"
+                                        )
                                         # used_paths.append((current_position, new_pos))
                                         # used_paths.append((new_pos, new_pos2))
                                         # used_paths.append((new_pos2, new_pos3))
 
                                     else:
-                                        all_paths.append(tested_path[:])
-                                        print(tested_path[:])
+                                        if distance_to_goal(new_pos3) < best_score:
+                                            best_score = distance_to_goal(new_pos3)
+                                            best_move = (
+                                                current_position,
+                                                new_pos,
+                                                new_pos2,
+                                                new_pos3,
+                                            )
+                                            all_paths.append(tested_path[:])
+                                        # print(tested_path[:])
                                         tested_path.pop()
                             tested_path.pop()
 
                         else:
+                            if distance_to_goal(new_pos2) < best_score:
+                                best_score = distance_to_goal(new_pos2)
+                                best_move = (current_position, new_pos, new_pos2)
                             all_paths.append(tested_path[:])
-                            print(tested_path[:])
+                            # print(tested_path[:])
                             tested_path.pop()
                 tested_path.pop()
             else:
+                if distance_to_goal(new_pos) < best_score:
+                    best_score = distance_to_goal(new_pos)
+                    best_move = (current_position, new_pos)
                 all_paths.append(tested_path[:])
-                print(tested_path[:])
+                # print(tested_path[:])
                 tested_path.pop()
 
         # If we can score directly, it's the best move
     # for path in all_paths:
     print(len(all_paths))
-
+    print(best_move)
     return best_move
 
 
