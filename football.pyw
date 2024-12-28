@@ -72,7 +72,6 @@ def calculate_best_move(
     )
 
     print(f"Best move: {best_move}, Best score: {best_score}")
-
     return best_move
 
 
@@ -217,6 +216,23 @@ def game_body():
             directions_available = directions_available - 1
         return directions_available
 
+    def cpu_move(best_move):
+        for one_step in best_move:
+            print(one_step)
+            used_paths.append(one_step)
+            used_paths_player2.append(one_step)
+            pygame.draw.line(screen, DARK_BLUE, one_step[0], one_step[1], 3)
+            ball_position = one_step[1]
+            rect = img.get_rect()
+            rect.center = ball_position
+            screen.blit(img, rect)
+            play_sound("kick")
+            pygame.time.wait(150)
+            pygame.display.flip()
+
+        return ball_position
+
+    # diff  --git a/football.pyw b/football.pyw
     # Main game loop
     clock = pygame.time.Clock()
     running = True
@@ -370,18 +386,21 @@ def game_body():
                     restarting_loop = False
                     running = False
                 if event.key == pygame.K_F3:
-                    (
-                        calculate_best_move(
-                            ball_position,
-                            directions,
-                            used_paths,
-                            BORDER_SIZE,
-                            GRID_WIDTH,
-                            GRID_HEIGHT,
-                            GRID_SIZE,
-                            directions2,
-                        )
+
+                    best_move = calculate_best_move(
+                        ball_position,
+                        directions,
+                        used_paths,
+                        BORDER_SIZE,
+                        GRID_WIDTH,
+                        GRID_HEIGHT,
+                        GRID_SIZE,
+                        directions2,
                     )
+                    if not first_player:
+                        ball_position = cpu_move(best_move)
+                        first_player = True
+
                 # move_ai(findbestpath(ball_position), ball_position)
                 if event.key == pygame.K_F5:
                     running = False
