@@ -4,6 +4,9 @@ import random
 import math
 import time
 
+player2_text = "Player 2"
+versus_ai = False
+
 
 def calculate_best_move(
     ball_position,
@@ -144,6 +147,10 @@ def calculate_best_move(
     best_move, best_score = explore_paths(
         ball_position, tested_path, best_move, best_score, time_started
     )
+    waited = time.time() - time_started
+    if waited < 1.5:
+        print(waited, " ", int(waited * 10000))
+        pygame.time.delay(1500 - int(waited * 10000))
 
     print(f"Best move: {best_move}, Best score: {best_score}")
     return best_move
@@ -451,6 +458,7 @@ def game_body():
     global restarting_loop
     while running:
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 restarting_loop = False
                 running = False
@@ -460,24 +468,31 @@ def game_body():
                     restarting_loop = False
                     running = False
                 if event.key == pygame.K_F3:  # ai player2
+                    global versus_ai
+                    versus_ai = not versus_ai
+                    global player2_text
+                    if player2_text == "Player 2":
+                        player2_text = "CPU"
+                    else:
+                        player2_text = "Player 2"
 
-                    best_move = calculate_best_move(
-                        ball_position,
-                        directions,
-                        used_paths,
-                        BORDER_SIZE,
-                        GRID_WIDTH,
-                        GRID_HEIGHT,
-                        GRID_SIZE,
-                        directions2,
-                    )
-                    if not first_player:
-                        ball_position = cpu_move(best_move)
-                        if win_condition(ball_position) == "first":
-                            first_player_won = True
-                        elif win_condition(ball_position) == "second":
-                            second_player_won = True
-                        first_player = True
+                    # best_move = calculate_best_move(
+                    #     ball_position,
+                    #     directions,
+                    #     used_paths,
+                    #     BORDER_SIZE,
+                    #     GRID_WIDTH,
+                    #     GRID_HEIGHT,
+                    #     GRID_SIZE,
+                    #     directions2,
+                    # )
+                    # if not first_player:
+                    #     ball_position = cpu_move(best_move)
+                    #     if win_condition(ball_position) == "first":
+                    #         first_player_won = True
+                    #     elif win_condition(ball_position) == "second":
+                    #         second_player_won = True
+                    #     first_player = True
 
                 if event.key == pygame.K_F5:
                     running = False
@@ -563,16 +578,22 @@ def game_body():
         player_font.italic = True
         victory_font.bold = True
         p1_text = player_font.render("Player 1", 36, GREEN)
-        p2_text = player_font.render("Player 2", 36, BLUE)
-        info_text = info_font.render(f"ESC to quit", 20, PALE_BLUE)
+
+        p2_text = player_font.render(player2_text, 36, BLUE)
+        info_text = info_font.render(f"ESC to quit", 20, DARK_BLUE)
         screen.blit(
             info_text,
             (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4),
         )
-        info_text = info_font.render(f"F5 to restart", 20, PALE_BLUE)
+        info_text = info_font.render(f"F5 to restart", 20, DARK_BLUE)
         screen.blit(
             info_text,
-            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 20),
+            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 24),
+        )
+        info_text = info_font.render(f"F3 to switch to versus CPU", 20, DARK_BLUE)
+        screen.blit(
+            info_text,
+            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 48),
         )
 
         if first_player_won:
@@ -605,8 +626,29 @@ def game_body():
                 BORDER_SIZE + GRID_SIZE - GRID_SIZE * 0.8,
             ),
         )
+
         pygame.display.flip()
         clock.tick(FPS)
+
+        if not first_player and versus_ai:
+            print("ai here?")
+            best_move = calculate_best_move(
+                ball_position,
+                directions,
+                used_paths,
+                BORDER_SIZE,
+                GRID_WIDTH,
+                GRID_HEIGHT,
+                GRID_SIZE,
+                directions2,
+            )
+            if not first_player:
+                ball_position = cpu_move(best_move)
+                if win_condition(ball_position) == "first":
+                    first_player_won = True
+                elif win_condition(ball_position) == "second":
+                    second_player_won = True
+                first_player = True
 
     pygame.quit()
 
