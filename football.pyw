@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 import math
+import time
 
 
 def calculate_best_move(
@@ -74,7 +75,7 @@ def calculate_best_move(
         distancey = abs(position[1] - (BORDER_SIZE + GRID_HEIGHT))
         distancex = abs(position[0] - (GRID_WIDTH // 2 + BORDER_SIZE))
         if distancey == 0:
-            print("goooool", distancey)
+            print("found goal")
         return distancex * distancex + distancey * distancey
 
     def win_condition(position):
@@ -91,8 +92,12 @@ def calculate_best_move(
         ):
             return "second"
 
-    def explore_paths(current_position, tested_path, best_move, best_score):
+    def explore_paths(
+        current_position, tested_path, best_move, best_score, time_started
+    ):
         """Recursively explore all possible paths."""
+        if time.time() > time_started + 3:
+            return best_move, best_score
         for direction_key, direction in directions.items():
             new_pos = [
                 current_position[0] + direction[0],
@@ -105,7 +110,7 @@ def calculate_best_move(
                 if bounce(new_pos) and blocked(new_pos, tested_path) > 0:
                     # Recurse deeper for further moves
                     best_move, best_score = explore_paths(
-                        new_pos, tested_path, best_move, best_score
+                        new_pos, tested_path, best_move, best_score, time_started
                     )
                 elif bounce(new_pos):
                     current_score = float("inf")
@@ -132,8 +137,12 @@ def calculate_best_move(
     tested_path = []
 
     # Start the recursive exploration
+    time_limit = 3
+    time_started = time.time()
+    print(time_started)
+
     best_move, best_score = explore_paths(
-        ball_position, tested_path, best_move, best_score
+        ball_position, tested_path, best_move, best_score, time_started
     )
 
     print(f"Best move: {best_move}, Best score: {best_score}")
@@ -292,9 +301,9 @@ def game_body():
             rect.center = ball_position
             screen.blit(img, rect)
             play_sound("kick")
-            pygame.time.wait(150)
+            pygame.time.wait(50)
             pygame.display.flip()
-
+            pygame.time.wait(200)
         return ball_position
 
     # diff  --git a/football.pyw b/football.pyw
