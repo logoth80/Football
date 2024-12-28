@@ -26,53 +26,99 @@ def calculate_best_move(
         )
 
     def bounce(new_pos):
-        return any(new_pos in path for path in used_paths)
+        if any(new_pos in path for path in used_paths):
+            return True
+
+    def simulate_move(position, directions, initial_direction):
+        """Simulate moves with the ability to continue on used paths."""
+        return
 
     def distance_to_goal(position):
         """Calculate Manhattan distance to goal."""
         distancey = abs(position[1] - (BORDER_SIZE + GRID_HEIGHT))
         distancex = abs(position[0] - (GRID_WIDTH // 2 + BORDER_SIZE))
-        return distancex * distancex + distancey * distancey
+        distance = distancex * distancex + distancey * distancey
+        # distance = math.sqrt(distance)
+        return distance
 
-    def explore_paths(current_position, tested_path, best_move, best_score):
-        """Recursively explore all possible paths."""
-        for direction_key, direction in directions.items():
-            new_pos = [
-                current_position[0] + direction[0],
-                current_position[1] + direction[1],
-            ]
-
-            if is_valid_move(current_position, new_pos, tested_path):
-                tested_path.append((current_position, new_pos))
-
-                if bounce(new_pos):
-                    # Recurse deeper for further moves
-                    best_move, best_score = explore_paths(
-                        new_pos, tested_path, best_move, best_score
-                    )
-                else:
-                    # Evaluate the current move
-                    current_score = distance_to_goal(new_pos)
-                    if current_score < best_score:
-                        best_score = current_score
-                        best_move = tested_path[:]
-
-                # Backtrack
-                tested_path.pop()
-
-        return best_move, best_score
-
+    # Opponent's goal is at the bottom
+    north_goal_y = BORDER_SIZE
+    south_goal_y = BORDER_SIZE + GRID_HEIGHT
     best_move = None
     best_score = float("inf")  # Lower scores are better
+    current_position = ball_position
+    all_paths = []
     tested_path = []
+    for direction_key, direction in directions.items():
+        new_pos = [
+            current_position[0] + direction[0],
+            current_position[1] + direction[1],
+        ]
+        # print(f"testing {current_position} to {new_pos}")
+        if is_valid_move(current_position, new_pos, tested_path):
+            tested_path.append((current_position, new_pos))
+            if bounce(new_pos):
+                # print("continue deeper")
+                for direction_key, direction2 in directions.items():
+                    new_pos2 = [
+                        new_pos[0] + direction2[0],
+                        new_pos[1] + direction2[1],
+                    ]
+                    # print(f"testing {current_position} to {new_pos}")
+                    if is_valid_move(new_pos, new_pos2, tested_path):
+                        tested_path.append((new_pos, new_pos2))
+                        if bounce(new_pos2):
+                            # print("continue deeper")
+                            for direction_key, direction3 in directions.items():
+                                new_pos3 = [
+                                    new_pos2[0] + direction3[0],
+                                    new_pos2[1] + direction3[1],
+                                ]
+                                # print(f"testing {current_position} to {new_pos}")
+                                if is_valid_move(new_pos2, new_pos3, tested_path):
+                                    tested_path.append((new_pos2, new_pos3))
+                                    if bounce(new_pos3):
+                                        print(
+                                            f"continue deeper: {direction}, {direction2}, {direction3}"
+                                        )
+                                        # used_paths.append((current_position, new_pos))
+                                        # used_paths.append((new_pos, new_pos2))
+                                        # used_paths.append((new_pos2, new_pos3))
 
-    # Start the recursive exploration
-    best_move, best_score = explore_paths(
-        ball_position, tested_path, best_move, best_score
-    )
+                                    else:
+                                        if distance_to_goal(new_pos3) < best_score:
+                                            best_score = distance_to_goal(new_pos3)
+                                            best_move = (
+                                                current_position,
+                                                new_pos,
+                                                new_pos2,
+                                                new_pos3,
+                                            )
+                                            all_paths.append(tested_path[:])
+                                        # print(tested_path[:])
+                                        tested_path.pop()
+                            tested_path.pop()
 
-    print(f"Best move: {best_move}, Best score: {best_score}")
+                        else:
+                            if distance_to_goal(new_pos2) < best_score:
+                                best_score = distance_to_goal(new_pos2)
+                                best_move = (current_position, new_pos, new_pos2)
+                            all_paths.append(tested_path[:])
+                            # print(tested_path[:])
+                            tested_path.pop()
+                tested_path.pop()
+            else:
+                if distance_to_goal(new_pos) < best_score:
+                    best_score = distance_to_goal(new_pos)
+                    best_move = (current_position, new_pos)
+                all_paths.append(tested_path[:])
+                # print(tested_path[:])
+                tested_path.pop()
 
+        # If we can score directly, it's the best move
+    # for path in all_paths:
+    print(len(all_paths))
+    print(best_move)
     return best_move
 
 
