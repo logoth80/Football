@@ -18,7 +18,7 @@ def calculate_best_move(
         """Check if a move is valid."""
         return (
             BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE
-            and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE
+            and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + 2 * BORDER_SIZE
             and (current_position, new_pos) not in used_paths
             and (new_pos, current_position) not in used_paths
             and (current_position, new_pos) not in path
@@ -28,11 +28,68 @@ def calculate_best_move(
     def bounce(new_pos):
         return any(new_pos in path for path in used_paths)
 
+    def cant_move(new_temp_pos, path):
+        if (
+            BORDER_SIZE <= new_temp_pos[0] <= GRID_WIDTH + BORDER_SIZE
+            and BORDER_SIZE <= new_temp_pos[1] <= GRID_HEIGHT + BORDER_SIZE
+            and (ball_position, new_temp_pos) not in used_paths
+            and (new_temp_pos, ball_position) not in used_paths
+            and (ball_position, new_temp_pos) not in path
+            and (new_temp_pos, ball_position) not in path
+        ):
+            return False
+        # print(f"stuck at {new_temp_pos}")
+        return True
+
+    def blocked(test_pos, path):
+        directions_available = 8
+        new_pos = [test_pos[0] - GRID_SIZE, test_pos[1] - GRID_SIZE]
+        if cant_move(new_pos, path):
+            directions_available = directions_available - 1
+        new_pos = [test_pos[0], test_pos[1] - GRID_SIZE]
+        if cant_move(new_pos, path):
+            directions_available = directions_available - 1
+        new_pos = [test_pos[0] + GRID_SIZE, test_pos[1] - GRID_SIZE]
+        if cant_move(new_pos, path):
+            directions_available = directions_available - 1
+        new_pos = [test_pos[0] - GRID_SIZE, test_pos[1]]
+        if cant_move(new_pos, path):
+            directions_available = directions_available - 1
+        new_pos = [test_pos[0] + GRID_SIZE, test_pos[1]]
+        if cant_move(new_pos, path):
+            directions_available = directions_available - 1
+        new_pos = [test_pos[0] - GRID_SIZE, test_pos[1] + GRID_SIZE]
+        if cant_move(new_pos, path):
+            directions_available = directions_available - 1
+        new_pos = [test_pos[0], test_pos[1] + GRID_SIZE]
+        if cant_move(new_pos, path):
+            directions_available = directions_available - 1
+        new_pos = [test_pos[0] + GRID_SIZE, test_pos[1] + GRID_SIZE]
+        if cant_move(new_pos, path):
+            directions_available = directions_available - 1
+        return directions_available
+
     def distance_to_goal(position):
         """Calculate Manhattan distance to goal."""
         distancey = abs(position[1] - (BORDER_SIZE + GRID_HEIGHT))
         distancex = abs(position[0] - (GRID_WIDTH // 2 + BORDER_SIZE))
+        if distancey == 0:
+            print("goooool", distancey)
         return distancex * distancex + distancey * distancey
+
+    def win_condition(position):
+        if position[1] == BORDER_SIZE and (
+            position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE
+            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
+            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE + GRID_SIZE
+        ):
+            return "first"
+        elif position[1] == BORDER_SIZE + GRID_HEIGHT and (
+            position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE
+            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
+            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE + GRID_SIZE
+        ):
+            return "second"
 
     def explore_paths(current_position, tested_path, best_move, best_score):
         """Recursively explore all possible paths."""
@@ -45,11 +102,15 @@ def calculate_best_move(
             if is_valid_move(current_position, new_pos, tested_path):
                 tested_path.append((current_position, new_pos))
 
-                if bounce(new_pos):
+                if bounce(new_pos) and blocked(new_pos, tested_path) > 0:
                     # Recurse deeper for further moves
                     best_move, best_score = explore_paths(
                         new_pos, tested_path, best_move, best_score
                     )
+                elif bounce(new_pos):
+                    current_score = float("inf")
+                    # print(f"stuck at {new_pos}")
+                    tested_path.pop()
                 else:
                     # Evaluate the current move
                     current_score = distance_to_goal(new_pos)
@@ -62,7 +123,7 @@ def calculate_best_move(
 
         return best_move, best_score
 
-    best_move = None
+    best_move = []
     best_score = float("inf")  # Lower scores are better
     tested_path = []
 
@@ -260,11 +321,11 @@ def game_body():
         used_paths.append((startpos, endpos))
 
     # Draw top lines, including all blocked outside
-    for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
-        startpos = [i, BORDER_SIZE]
-        endpos = [i + GRID_SIZE, BORDER_SIZE]
-        used_paths.append((startpos, endpos))
-        invisible_paths.append((startpos, endpos))
+    # for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
+    #     startpos = [i, BORDER_SIZE]
+    #     endpos = [i + GRID_SIZE, BORDER_SIZE]
+    #     used_paths.append((startpos, endpos))
+    #     invisible_paths.append((startpos, endpos))
     for i in range(
         BORDER_SIZE, BORDER_SIZE + int(GRID_WIDTH / 2) - GRID_SIZE, GRID_SIZE
     ):
@@ -302,11 +363,11 @@ def game_body():
         invisible_paths.append((startpos2, endpos3))
 
     # bottom lines, including all invisible blocked outs
-    for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
-        startpos = [i, GRID_HEIGHT + BORDER_SIZE]
-        endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE]
-        used_paths.append((startpos, endpos))
-        invisible_paths.append((startpos, endpos))
+    # for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
+    #     startpos = [i, GRID_HEIGHT + BORDER_SIZE]
+    #     endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE]
+    # used_paths.append((startpos, endpos))
+    # invisible_paths.append((startpos, endpos))
     for i in range(
         BORDER_SIZE, int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE, GRID_SIZE
     ):
