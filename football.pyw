@@ -117,6 +117,10 @@ def calculate_best_move(
                     if current_score < best_score:
                         best_score = current_score
                         best_move = tested_path[:]
+                    elif current_score == best_score:
+                        if random.random() > 0.5:
+                            best_score = current_score
+                            best_move = tested_path[:]
 
                 # Backtrack
                 tested_path.pop()
@@ -446,7 +450,7 @@ def game_body():
                 if event.key == pygame.K_ESCAPE:
                     restarting_loop = False
                     running = False
-                if event.key == pygame.K_F3:
+                if event.key == pygame.K_F3:  # ai player2
 
                     best_move = calculate_best_move(
                         ball_position,
@@ -460,9 +464,12 @@ def game_body():
                     )
                     if not first_player:
                         ball_position = cpu_move(best_move)
+                        if win_condition(ball_position) == "first":
+                            first_player_won = True
+                        elif win_condition(ball_position) == "second":
+                            second_player_won = True
                         first_player = True
 
-                # move_ai(findbestpath(ball_position), ball_position)
                 if event.key == pygame.K_F5:
                     running = False
                 if (key in directions and first_player == True) or (
