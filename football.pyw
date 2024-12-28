@@ -46,6 +46,7 @@ def calculate_best_move(
     best_move = None
     best_score = float("inf")  # Lower scores are better
     current_position = ball_position
+    all_paths = []
     tested_path = []
     for direction_key, direction in directions.items():
         new_pos = [
@@ -54,15 +55,53 @@ def calculate_best_move(
         ]
         # print(f"testing {current_position} to {new_pos}")
         if is_valid_move(current_position, new_pos, tested_path):
-            tested_path.append([current_position, new_pos])
+            tested_path.append((current_position, new_pos))
             if bounce(new_pos):
                 print("continue deeper")
+                for direction_key, direction in directions.items():
+                    print("testing cont from: ", new_pos)
+                    new_pos2 = [
+                        new_pos[0] + direction[0],
+                        new_pos[1] + direction[1],
+                    ]
+                    # print(f"testing {current_position} to {new_pos}")
+                    if is_valid_move(new_pos, new_pos2, tested_path):
+                        tested_path.append((new_pos, new_pos2))
+                        if bounce(new_pos2):
+                            print("continue deeper")
+                            for direction_key, direction in directions.items():
+                                new_pos3 = [
+                                    new_pos2[0] + direction[0],
+                                    new_pos2[1] + direction[1],
+                                ]
+                                # print(f"testing {current_position} to {new_pos}")
+                                if is_valid_move(new_pos2, new_pos3, tested_path):
+                                    tested_path.append((new_pos2, new_pos3))
+                                    if bounce(new_pos3):
+                                        print("continue deeper")
+                                        # used_paths.append((current_position, new_pos))
+                                        # used_paths.append((new_pos, new_pos2))
+                                        # used_paths.append((new_pos2, new_pos3))
+
+                                    else:
+                                        all_paths.append(tested_path[:])
+                                        print(tested_path[:])
+                                        tested_path.pop()
+                            tested_path.pop()
+
+                        else:
+                            all_paths.append(tested_path[:])
+                            print(tested_path[:])
+                            tested_path.pop()
+                tested_path.pop()
             else:
-                print(
-                    f"{current_position} to {new_pos} in {tested_path} is possible and stopped"
-                )
+                all_paths.append(tested_path[:])
+                print(tested_path[:])
+                tested_path.pop()
 
         # If we can score directly, it's the best move
+    # for path in all_paths:
+    print(len(all_paths))
 
     return best_move
 
