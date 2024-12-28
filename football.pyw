@@ -14,77 +14,41 @@ def calculate_best_move(
     GRID_SIZE,
     opponent_directions,
 ):
-    def is_valid_move(current_position, new_pos, prev_direction, path):
+    def is_valid_move(current_position, new_pos, path):
         """Check if a move is valid."""
         return (
             BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE
             and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE
             and (current_position, new_pos) not in used_paths
             and (new_pos, current_position) not in used_paths
-            and new_pos != prev_direction  # Prevent backtracking
             and (current_position, new_pos) not in path
             and (new_pos, current_position) not in path
         )
 
     def simulate_move(position, directions, initial_direction):
         """Simulate moves with the ability to continue on used paths."""
-        path = []
-        current_pos = position
-        last_direction = initial_direction
-        while True:
-            found_path = False
-            for key, direction in directions.items():
-                next_pos = [
-                    current_pos[0] + direction[0],
-                    current_pos[1] + direction[1],
-                ]
-                if is_valid_move(current_pos, next_pos, last_direction, path):
-                    path.append((current_pos, next_pos))
-                    current_pos = next_pos
-                    last_direction = (
-                        -direction[0],
-                        -direction[1],
-                    )  # Track the opposite
-                    found_path = True
-                    break
-            if not found_path:  # No valid paths to continue
-                break
-        return path, current_pos
+        return
 
-    def distance_to_goal(position, goal_y):
+    def distance_to_goal(position):
         """Calculate Manhattan distance to goal."""
-        return abs(position[1] - goal_y)
+        distancey = abs(position[1] - (BORDER_SIZE))
+        distancex = abs(position[0] - (GRID_WIDTH / 2) * (GRID_SIZE))
+        distance = distancex * distancex + distancey * distancey
+        return distance
 
     # Opponent's goal is at the bottom
     north_goal_y = BORDER_SIZE
     south_goal_y = BORDER_SIZE + GRID_HEIGHT
-
     best_move = None
     best_score = float("inf")  # Lower scores are better
-
+    current_position = ball_position
+    tested_path = []
     for direction_key, direction in directions.items():
-        simulated_path, new_position = simulate_move(
-            ball_position, directions, direction
-        )
-
+        new_pos = current_position[0] + direction[0], current_position[1] + direction[1]
+        print(f"testing {current_position} to {new_pos}")
+        if is_valid_move(current_position, new_pos, tested_path):
+            print("possible")
         # If we can score directly, it's the best move
-        if new_position[1] == north_goal_y:
-            return simulated_path
-
-        # Simulate opponent's response
-        worst_opponent_score = float("-inf")
-        for opp_key, opp_direction in opponent_directions.items():
-            _, opp_new_position = simulate_move(
-                new_position, opponent_directions, opp_direction
-            )
-            opponent_score = distance_to_goal(opp_new_position, south_goal_y)
-            worst_opponent_score = max(worst_opponent_score, opponent_score)
-
-        # Evaluate this move
-        move_score = worst_opponent_score
-        if move_score < best_score:
-            best_score = move_score
-            best_move = simulated_path
 
     return best_move
 
@@ -230,19 +194,6 @@ def game_body():
             directions_available = directions_available - 1
         return directions_available
 
-    def move_ai(list_of_moves, ball_position):
-        for dire in list_of_moves:
-            return
-            print(f"direction: {dire} bp: {ball_position} {list_of_moves}")
-            # startpos = (ball_position[0], ball_position[1])
-            # new_pos = (ball_position[0] + dire[0], ball_position[1] + dire[1])
-            # if not cant_move(new_pos):
-            #    return new_pos
-            # used_paths.append((startpos, new_pos))
-            # ball_position[0] = new_pos[0]
-            # ball_position[1] = new_pos[1]
-        return
-
     # Main game loop
     clock = pygame.time.Clock()
     running = True
@@ -384,41 +335,6 @@ def game_body():
     pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
     used_paths.append((startpos, endpos))
 
-    def findbestpath(current_pos):
-        all_paths = []
-        pathtest = []
-        bestdistance = 999999999
-
-        def explore_path(current_pos, path):
-            if len(path) > 200:  # Limit the depth of recursion to avoid infinite loops
-                return
-
-            # all_paths.append(current_pos)
-
-            for key in directions:
-                # print(path)
-                new_pos = [
-                    current_pos[0] + directions[key][0],
-                    current_pos[1] + directions[key][1],
-                ]
-                if (
-                    is_valid_move(current_pos, new_pos)
-                    and (current_pos, new_pos) not in all_paths
-                    and (new_pos, current_pos) not in all_paths
-                ):
-                    all_paths.append((current_pos, new_pos))
-                    pathtest.append(directions[key])
-                    print(all_paths, " appending path")
-                    if not stop_move(new_pos):
-                        print("not stopping")
-                        explore_path(new_pos, pathtest)  # + [(new_pos)])
-
-        # Start exploring paths from the current position
-        explore_path(current_pos, [current_pos])
-        print(" paths found: ", len(all_paths))
-        return all_paths
-        # end AI
-
     global restarting_loop
     while running:
         for event in pygame.event.get():
@@ -431,7 +347,7 @@ def game_body():
                     restarting_loop = False
                     running = False
                 if event.key == pygame.K_F3:
-                    used_paths = used_paths + (
+                    (
                         calculate_best_move(
                             ball_position,
                             directions,
@@ -443,7 +359,7 @@ def game_body():
                             directions2,
                         )
                     )
-                    # move_ai(findbestpath(ball_position), ball_position)
+                # move_ai(findbestpath(ball_position), ball_position)
                 if event.key == pygame.K_F5:
                     running = False
                 if (key in directions and first_player == True) or (
