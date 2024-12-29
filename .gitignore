@@ -2,3 +2,4 @@ build/
 dist/
 football.spec
 compile.bat
+*.kra
