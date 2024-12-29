@@ -506,6 +506,32 @@ def game_body():
         p1_text = player_font.render("Player 1", 36, GREEN)
         p2_text = player_font.render(player2_text, 36, BLUE)
 
+        if player2_text == "Player 2":
+            info_text = info_font.render(f"I  O  P", 20, DARK_BLUE)
+            screen.blit(
+                info_text,
+                (
+                    WIDTH - 2 * BORDER_SIZE + 5,
+                    BORDER_SIZE - 2 * GRID_SIZE + GRID_SIZE // 4 + 95,
+                ),
+            )
+            info_text = info_font.render(f"K      ;  -  to move", 20, DARK_BLUE)
+            screen.blit(
+                info_text,
+                (
+                    WIDTH - 2 * BORDER_SIZE + 5,
+                    BORDER_SIZE - 2 * GRID_SIZE + GRID_SIZE // 4 + 113,
+                ),
+            )
+            info_text = info_font.render(f",   .   /", 20, DARK_BLUE)
+            screen.blit(
+                info_text,
+                (
+                    WIDTH - 2 * BORDER_SIZE + 5,
+                    BORDER_SIZE - 2 * GRID_SIZE + GRID_SIZE // 4 + 131,
+                ),
+            )
+
         info_text = info_font.render(f"ESC to quit", 20, DARK_BLUE)
         screen.blit(
             info_text,
@@ -523,7 +549,21 @@ def game_body():
             info_text,
             (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 48),
         )
-
+        info_text = info_font.render(f"Q W E", 20, DARK_BLUE)
+        screen.blit(
+            info_text,
+            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 72),
+        )
+        info_text = info_font.render(f"A     D  -  to move", 20, DARK_BLUE)
+        screen.blit(
+            info_text,
+            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 92),
+        )
+        info_text = info_font.render(f"Z  X C", 20, DARK_BLUE)
+        screen.blit(
+            info_text,
+            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 112),
+        )
         if first_player_won:
             victory_text = victory_font.render("Player 1 WON!", 36, RED)
             screen.blit(
