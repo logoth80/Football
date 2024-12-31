@@ -553,13 +553,7 @@ def game_body():
         # if 1 player mode, AI move
         if not first_player and versus_ai and not fpwon and not spwon:
             best_move = calculate_best_move(
-                ball_pos,
-                directions,
-                used_paths,
-                BORDER,
-                g_wid,
-                g_hei,
-                G_SIZE,
+                ball_pos, directions, used_paths, BORDER, g_wid, g_hei, G_SIZE
             )
             # move ball across the best move path
             if not first_player:
