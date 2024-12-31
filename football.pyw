@@ -148,7 +148,8 @@ def game_body():
     GRID_WIDTH = 2 * x * GRID_SIZE
     GRID_HEIGHT = 2 * y * GRID_SIZE
     WIDTH, HEIGHT = GRID_WIDTH + 2 * BORDER_SIZE, GRID_HEIGHT + 2 * BORDER_SIZE
-
+    half_h = HEIGHT / 2
+    half_w = WIDTH / 2
     FPS = 144
 
     WHITE = (225, 225, 255)
@@ -168,14 +169,14 @@ def game_body():
     invisible_paths = []  # eraser (visual only)
 
     player_font = pygame.font.SysFont("Georgia", 36)
-    victory_font = pygame.font.SysFont("Cambria", 72)
+    v_font = pygame.font.SysFont("Cambria", 72)
     info_font = pygame.font.SysFont("Ariel", 20)
 
     img = pygame.image.load("ball.png")
     img = pygame.transform.scale(img, (GRID_SIZE * 0.5, GRID_SIZE * 0.5))
     first_player = True  # Turn
-    first_player_won = False
-    second_player_won = False
+    fpwon = False
+    spwon = False
 
     # Player 1
     directions = {
@@ -422,8 +423,8 @@ def game_body():
 
                 if event.key == pygame.K_F5:
                     running = False
-                if (key in directions and first_player == True) or (
-                    key in directions2 and first_player == False
+                if (key in directions and first_player == True and not spwon) or (
+                    key in directions2 and first_player == False and not fpwon
                 ):
                     if first_player:
                         new_pos = [
@@ -456,9 +457,9 @@ def game_body():
                         used_paths.append((ball_position, new_pos))
                         play_sound("kick")
                         if win_condition(new_pos) == "first":
-                            first_player_won = True
+                            fpwon = True
                         elif win_condition(new_pos) == "second":
-                            second_player_won = True
+                            spwon = True
 
                         if change:
                             first_player = not first_player
@@ -466,9 +467,9 @@ def game_body():
                         ball_position = new_pos
                         if blocked() == 0:
                             if first_player:
-                                second_player_won = True
+                                spwon = True
                             else:
-                                first_player_won = True
+                                fpwon = True
 
                         change = False
 
@@ -502,7 +503,7 @@ def game_body():
 
         player_font.bold = True
         player_font.italic = True
-        victory_font.bold = True
+        v_font.bold = True
         p1_text = player_font.render("Player 1", 36, GREEN)
         p2_text = player_font.render(player2_text, 36, BLUE)
 
@@ -564,22 +565,22 @@ def game_body():
             info_text,
             (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 112),
         )
-        if first_player_won:
-            victory_text = victory_font.render("Player 1 WON!", 36, RED)
+        if fpwon:
+            v_text = v_font.render("Player 1 WON!", 36, RED)
             screen.blit(
-                victory_text,
+                v_text,
                 (
-                    WIDTH // 2 - victory_text.get_width() // 2,
-                    HEIGHT // 2 - victory_text.get_height(),
+                    WIDTH // 2 - v_text.get_width() // 2,
+                    HEIGHT // 2 - v_text.get_height(),
                 ),
             )
-        if second_player_won:
-            victory_text = victory_font.render(f"{player2_text} WON!", 36, RED)
+        if spwon:
+            v_text = v_font.render(f"{player2_text} WON!", 36, RED)
             screen.blit(
-                victory_text,
+                v_text,
                 (
-                    WIDTH // 2 - victory_text.get_width() // 2,
-                    HEIGHT // 2 - victory_text.get_height(),
+                    WIDTH // 2 - v_text.get_width() // 2,
+                    HEIGHT // 2 - v_text.get_height(),
                 ),
             )
 
@@ -597,8 +598,8 @@ def game_body():
 
         pygame.display.flip()
         clock.tick(FPS)
-
-        if not first_player and versus_ai:  # if 1 player mode, AI move
+        # if 1 player mode, AI move
+        if not first_player and versus_ai and not fpwon and not spwon:
             best_move = calculate_best_move(
                 ball_position,
                 directions,
@@ -609,12 +610,13 @@ def game_body():
                 GRID_SIZE,
                 directions2,
             )
+            # move ball across the best move path
             if not first_player:
                 ball_position = cpu_move(best_move)
                 if win_condition(ball_position) == "first":
-                    first_player_won = True
+                    fpwon = True
                 elif win_condition(ball_position) == "second":
-                    second_player_won = True
+                    spwon = True
                 first_player = True
 
     pygame.quit()
