@@ -142,12 +142,12 @@ def game_body():
     pygame.init()
     x = 4
     y = 6
-    BORDER_SIZE = 150
-    GRID_SIZE = 55
+    BORDER = 150
+    G_SIZE = 55
 
-    GRID_WIDTH = 2 * x * GRID_SIZE
-    GRID_HEIGHT = 2 * y * GRID_SIZE
-    WIDTH, HEIGHT = GRID_WIDTH + 2 * BORDER_SIZE, GRID_HEIGHT + 2 * BORDER_SIZE
+    g_wid = 2 * x * G_SIZE
+    g_hei = 2 * y * G_SIZE
+    WIDTH, HEIGHT = g_wid + 2 * BORDER, g_hei + 2 * BORDER
     half_h = HEIGHT / 2
     half_w = WIDTH / 2
     FPS = 144
@@ -162,7 +162,7 @@ def game_body():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Football")
 
-    ball_position = [x * GRID_SIZE + BORDER_SIZE, y * GRID_SIZE + BORDER_SIZE]
+    ball_pos = [x * G_SIZE + BORDER, y * G_SIZE + BORDER]
     used_paths = []
     used_paths_player1 = []  # to color only
     used_paths_player2 = []
@@ -173,45 +173,45 @@ def game_body():
     info_font = pygame.font.SysFont("Ariel", 20)
 
     img = pygame.image.load("ball.png")
-    img = pygame.transform.scale(img, (GRID_SIZE * 0.5, GRID_SIZE * 0.5))
+    img = pygame.transform.scale(img, (G_SIZE * 0.5, G_SIZE * 0.5))
     first_player = True  # Turn
     fpwon = False
     spwon = False
 
     # Player 1
     directions = {
-        "q": (-GRID_SIZE, -GRID_SIZE),
-        "w": (0, -GRID_SIZE),
-        "e": (GRID_SIZE, -GRID_SIZE),
-        "a": (-GRID_SIZE, 0),
-        "d": (GRID_SIZE, 0),
-        "z": (-GRID_SIZE, GRID_SIZE),
-        "x": (0, GRID_SIZE),
-        "c": (GRID_SIZE, GRID_SIZE),
+        "q": (-G_SIZE, -G_SIZE),
+        "w": (0, -G_SIZE),
+        "e": (G_SIZE, -G_SIZE),
+        "a": (-G_SIZE, 0),
+        "d": (G_SIZE, 0),
+        "z": (-G_SIZE, G_SIZE),
+        "x": (0, G_SIZE),
+        "c": (G_SIZE, G_SIZE),
     }
     # Player 2
     directions2 = {
-        "i": (-GRID_SIZE, -GRID_SIZE),
-        "o": (0, -GRID_SIZE),
-        "p": (GRID_SIZE, -GRID_SIZE),
-        "k": (-GRID_SIZE, 0),
-        ";": (GRID_SIZE, 0),
-        ",": (-GRID_SIZE, GRID_SIZE),
-        ".": (0, GRID_SIZE),
-        "/": (GRID_SIZE, GRID_SIZE),
+        "i": (-G_SIZE, -G_SIZE),
+        "o": (0, -G_SIZE),
+        "p": (G_SIZE, -G_SIZE),
+        "k": (-G_SIZE, 0),
+        ";": (G_SIZE, 0),
+        ",": (-G_SIZE, G_SIZE),
+        ".": (0, G_SIZE),
+        "/": (G_SIZE, G_SIZE),
     }
 
     def win_condition(position):
-        if position[1] == BORDER_SIZE and (
-            position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE
-            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
-            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE + GRID_SIZE
+        if position[1] == BORDER and (
+            position[0] == int(g_wid / 2) + BORDER
+            or position[0] == int(g_wid / 2) + BORDER - G_SIZE
+            or position[0] == int(g_wid / 2) + BORDER + G_SIZE
         ):
             return "first"
-        elif position[1] == BORDER_SIZE + GRID_HEIGHT and (
-            position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE
-            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE
-            or position[0] == int(GRID_WIDTH / 2) + BORDER_SIZE + GRID_SIZE
+        elif position[1] == BORDER + g_hei and (
+            position[0] == int(g_wid / 2) + BORDER
+            or position[0] == int(g_wid / 2) + BORDER - G_SIZE
+            or position[0] == int(g_wid / 2) + BORDER + G_SIZE
         ):
             return "second"
         else:
@@ -219,38 +219,38 @@ def game_body():
 
     def cant_move(new_temp_pos):
         if (
-            BORDER_SIZE <= new_temp_pos[0] <= GRID_WIDTH + BORDER_SIZE
-            and BORDER_SIZE <= new_temp_pos[1] <= GRID_HEIGHT + BORDER_SIZE
-            and (ball_position, new_temp_pos) not in used_paths
-            and (new_temp_pos, ball_position) not in used_paths
+            BORDER <= new_temp_pos[0] <= g_wid + BORDER
+            and BORDER <= new_temp_pos[1] <= g_hei + BORDER
+            and (ball_pos, new_temp_pos) not in used_paths
+            and (new_temp_pos, ball_pos) not in used_paths
         ):
             return False
         return True
 
     def blocked():  # not for AI
         directions_available = 8
-        new_pos = [ball_position[0] - GRID_SIZE, ball_position[1] - GRID_SIZE]
+        new_pos = [ball_pos[0] - G_SIZE, ball_pos[1] - G_SIZE]
         if cant_move(new_pos):
             directions_available = directions_available - 1
-        new_pos = [ball_position[0], ball_position[1] - GRID_SIZE]
+        new_pos = [ball_pos[0], ball_pos[1] - G_SIZE]
         if cant_move(new_pos):
             directions_available = directions_available - 1
-        new_pos = [ball_position[0] + GRID_SIZE, ball_position[1] - GRID_SIZE]
+        new_pos = [ball_pos[0] + G_SIZE, ball_pos[1] - G_SIZE]
         if cant_move(new_pos):
             directions_available = directions_available - 1
-        new_pos = [ball_position[0] - GRID_SIZE, ball_position[1]]
+        new_pos = [ball_pos[0] - G_SIZE, ball_pos[1]]
         if cant_move(new_pos):
             directions_available = directions_available - 1
-        new_pos = [ball_position[0] + GRID_SIZE, ball_position[1]]
+        new_pos = [ball_pos[0] + G_SIZE, ball_pos[1]]
         if cant_move(new_pos):
             directions_available = directions_available - 1
-        new_pos = [ball_position[0] - GRID_SIZE, ball_position[1] + GRID_SIZE]
+        new_pos = [ball_pos[0] - G_SIZE, ball_pos[1] + G_SIZE]
         if cant_move(new_pos):
             directions_available = directions_available - 1
-        new_pos = [ball_position[0], ball_position[1] + GRID_SIZE]
+        new_pos = [ball_pos[0], ball_pos[1] + G_SIZE]
         if cant_move(new_pos):
             directions_available = directions_available - 1
-        new_pos = [ball_position[0] + GRID_SIZE, ball_position[1] + GRID_SIZE]
+        new_pos = [ball_pos[0] + G_SIZE, ball_pos[1] + G_SIZE]
         if cant_move(new_pos):
             directions_available = directions_available - 1
         return directions_available
@@ -279,126 +279,110 @@ def game_body():
     # invisible_paths hides used_paths outside lines
 
     # Draw side lines
-    for i in range(GRID_SIZE, GRID_HEIGHT - GRID_SIZE, GRID_SIZE):
-        startpos = [BORDER_SIZE, i + BORDER_SIZE]
-        endpos = [BORDER_SIZE, i + BORDER_SIZE + GRID_SIZE]
-        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-        used_paths.append((startpos, endpos))
+    for i in range(G_SIZE, g_hei - G_SIZE, G_SIZE):
+        spos = [BORDER, i + BORDER]
+        endpos = [BORDER, i + BORDER + G_SIZE]
+        pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+        used_paths.append((spos, endpos))
 
-        startpos = [GRID_WIDTH + BORDER_SIZE, i + BORDER_SIZE]
-        endpos = [GRID_WIDTH + BORDER_SIZE, i + BORDER_SIZE + GRID_SIZE]
-        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-        used_paths.append((startpos, endpos))
+        spos = [g_wid + BORDER, i + BORDER]
+        endpos = [g_wid + BORDER, i + BORDER + G_SIZE]
+        pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+        used_paths.append((spos, endpos))
 
     # Draw middle line
-    for i in range(BORDER_SIZE, GRID_WIDTH + BORDER_SIZE, GRID_SIZE):
-        startpos = [i, BORDER_SIZE + (GRID_HEIGHT) / 2]
-        endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_HEIGHT / 2]
-        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-        used_paths.append((startpos, endpos))
+    for i in range(BORDER, g_wid + BORDER, G_SIZE):
+        spos = [i, BORDER + (g_hei) / 2]
+        endpos = [i + G_SIZE, BORDER + g_hei / 2]
+        pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+        used_paths.append((spos, endpos))
 
-    for i in range(
-        BORDER_SIZE, BORDER_SIZE + int(GRID_WIDTH / 2) - GRID_SIZE, GRID_SIZE
-    ):
-        startpos = [i, BORDER_SIZE + GRID_SIZE]
-        endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
-        endpos2 = [i + GRID_SIZE, BORDER_SIZE]
-        endpos3 = [i, BORDER_SIZE]
-        startpos2 = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
-        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-        used_paths.append((startpos, endpos))
-        used_paths.append((startpos, endpos2))
-        used_paths.append((startpos, endpos3))
+    for i in range(BORDER, BORDER + int(g_wid / 2) - G_SIZE, G_SIZE):
+        spos = [i, BORDER + G_SIZE]
+        endpos = [i + G_SIZE, BORDER + G_SIZE]
+        endpos2 = [i + G_SIZE, BORDER]
+        endpos3 = [i, BORDER]
+        startpos2 = [i + G_SIZE, BORDER + G_SIZE]
+        pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+        used_paths.append((spos, endpos))
+        used_paths.append((spos, endpos2))
+        used_paths.append((spos, endpos3))
         used_paths.append((startpos2, endpos3))
-        invisible_paths.append((startpos, endpos2))
-        invisible_paths.append((startpos, endpos3))
+        invisible_paths.append((spos, endpos2))
+        invisible_paths.append((spos, endpos3))
         invisible_paths.append((startpos2, endpos3))
 
     for i in range(
-        int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
-        GRID_WIDTH + BORDER_SIZE,
-        GRID_SIZE,
+        int(g_wid / 2) + G_SIZE + BORDER,
+        g_wid + BORDER,
+        G_SIZE,
     ):
-        startpos = [i, BORDER_SIZE + GRID_SIZE]
-        endpos = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
-        endpos2 = [i + GRID_SIZE, BORDER_SIZE]
-        startpos2 = [i + GRID_SIZE, BORDER_SIZE + GRID_SIZE]
-        endpos3 = [i, BORDER_SIZE]
-        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-        used_paths.append((startpos, endpos))
-        used_paths.append((startpos, endpos2))
+        spos = [i, BORDER + G_SIZE]
+        endpos = [i + G_SIZE, BORDER + G_SIZE]
+        endpos2 = [i + G_SIZE, BORDER]
+        startpos2 = [i + G_SIZE, BORDER + G_SIZE]
+        endpos3 = [i, BORDER]
+        pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+        used_paths.append((spos, endpos))
+        used_paths.append((spos, endpos2))
         used_paths.append((startpos2, endpos2))
         used_paths.append((startpos2, endpos3))
-        invisible_paths.append((startpos, endpos2))
+        invisible_paths.append((spos, endpos2))
         invisible_paths.append((startpos2, endpos2))
         invisible_paths.append((startpos2, endpos3))
 
-    for i in range(
-        BORDER_SIZE, int(GRID_WIDTH / 2) + BORDER_SIZE - GRID_SIZE, GRID_SIZE
-    ):
-        startpos = [i, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
-        endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
-        endpos2 = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE]
-        endpos3 = [i, GRID_HEIGHT + BORDER_SIZE]
-        startpos2 = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
-        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-        used_paths.append((startpos, endpos))
-        used_paths.append((startpos, endpos2))
-        used_paths.append((startpos, endpos3))
+    for i in range(BORDER, int(g_wid / 2) + BORDER - G_SIZE, G_SIZE):
+        spos = [i, g_hei + BORDER - G_SIZE]
+        endpos = [i + G_SIZE, g_hei + BORDER - G_SIZE]
+        endpos2 = [i + G_SIZE, g_hei + BORDER]
+        endpos3 = [i, g_hei + BORDER]
+        startpos2 = [i + G_SIZE, g_hei + BORDER - G_SIZE]
+        pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+        used_paths.append((spos, endpos))
+        used_paths.append((spos, endpos2))
+        used_paths.append((spos, endpos3))
         used_paths.append((startpos2, endpos3))
-        invisible_paths.append((startpos, endpos2))
-        invisible_paths.append((startpos, endpos3))
+        invisible_paths.append((spos, endpos2))
+        invisible_paths.append((spos, endpos3))
         invisible_paths.append((startpos2, endpos3))
 
     for i in range(
-        int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
-        GRID_WIDTH + BORDER_SIZE,
-        GRID_SIZE,
+        int(g_wid / 2) + G_SIZE + BORDER,
+        g_wid + BORDER,
+        G_SIZE,
     ):
-        startpos = [i, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
-        endpos = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
-        endpos2 = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE]
-        startpos2 = [i + GRID_SIZE, GRID_HEIGHT + BORDER_SIZE - GRID_SIZE]
-        endpos3 = [i, GRID_HEIGHT + BORDER_SIZE]
-        pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-        used_paths.append((startpos, endpos))
-        used_paths.append((startpos, endpos2))
+        spos = [i, g_hei + BORDER - G_SIZE]
+        endpos = [i + G_SIZE, g_hei + BORDER - G_SIZE]
+        endpos2 = [i + G_SIZE, g_hei + BORDER]
+        startpos2 = [i + G_SIZE, g_hei + BORDER - G_SIZE]
+        endpos3 = [i, g_hei + BORDER]
+        pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+        used_paths.append((spos, endpos))
+        used_paths.append((spos, endpos2))
         used_paths.append((startpos2, endpos2))
         used_paths.append((startpos2, endpos3))
-        invisible_paths.append((startpos, endpos2))
+        invisible_paths.append((spos, endpos2))
         invisible_paths.append((startpos2, endpos2))
         invisible_paths.append((startpos2, endpos3))
 
     # top goal
-    startpos = [int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, BORDER_SIZE]
-    endpos = [int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE, BORDER_SIZE + GRID_SIZE]
-    pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos))
-    startpos = [int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE, BORDER_SIZE]
-    endpos = [int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE, BORDER_SIZE + GRID_SIZE]
-    pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos))
+    spos = [int(g_wid / 2) + G_SIZE + BORDER, BORDER]
+    endpos = [int(g_wid / 2) + G_SIZE + BORDER, BORDER + G_SIZE]
+    pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+    used_paths.append((spos, endpos))
+    spos = [int(g_wid / 2) - G_SIZE + BORDER, BORDER]
+    endpos = [int(g_wid / 2) - G_SIZE + BORDER, BORDER + G_SIZE]
+    pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+    used_paths.append((spos, endpos))
     # bottom goal
-    startpos = [
-        int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
-        GRID_HEIGHT + BORDER_SIZE - GRID_SIZE,
-    ]
-    endpos = [
-        int(GRID_WIDTH / 2) + GRID_SIZE + BORDER_SIZE,
-        GRID_HEIGHT + BORDER_SIZE,
-    ]
-    pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos))
-    startpos = [
-        int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE,
-        GRID_HEIGHT + BORDER_SIZE - GRID_SIZE,
-    ]
-    endpos = [
-        int(GRID_WIDTH / 2) - GRID_SIZE + BORDER_SIZE,
-        GRID_HEIGHT + BORDER_SIZE,
-    ]
-    pygame.draw.line(screen, DARK_BLUE, startpos, endpos, 3)
-    used_paths.append((startpos, endpos))
+    spos = [int(g_wid / 2) + G_SIZE + BORDER, g_hei + BORDER - G_SIZE]
+    endpos = [int(g_wid / 2) + G_SIZE + BORDER, g_hei + BORDER]
+    pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+    used_paths.append((spos, endpos))
+    spos = [int(g_wid / 2) - G_SIZE + BORDER, g_hei + BORDER - G_SIZE]
+    endpos = [int(g_wid / 2) - G_SIZE + BORDER, g_hei + BORDER]
+    pygame.draw.line(screen, DARK_BLUE, spos, endpos, 3)
+    used_paths.append((spos, endpos))
 
     global restarting_loop  # so game doesn't just quit
     while running:
@@ -428,21 +412,21 @@ def game_body():
                 ):
                     if first_player:
                         new_pos = [
-                            ball_position[0] + directions[key][0],
-                            ball_position[1] + directions[key][1],
+                            ball_pos[0] + directions[key][0],
+                            ball_pos[1] + directions[key][1],
                         ]
                     else:
                         new_pos = [
-                            ball_position[0] + directions2[key][0],
-                            ball_position[1] + directions2[key][1],
+                            ball_pos[0] + directions2[key][0],
+                            ball_pos[1] + directions2[key][1],
                         ]
 
                     # Check if the new position is within bounds and not already used
                     if (
-                        BORDER_SIZE <= new_pos[0] <= GRID_WIDTH + BORDER_SIZE
-                        and BORDER_SIZE <= new_pos[1] <= GRID_HEIGHT + BORDER_SIZE
-                        and (ball_position, new_pos) not in used_paths
-                        and (new_pos, ball_position) not in used_paths
+                        BORDER <= new_pos[0] <= g_wid + BORDER
+                        and BORDER <= new_pos[1] <= g_hei + BORDER
+                        and (ball_pos, new_pos) not in used_paths
+                        and (new_pos, ball_pos) not in used_paths
                     ):
                         #   check if move ended on free spot, if so, switch player
                         change = False
@@ -450,11 +434,11 @@ def game_body():
                             change = True
                         # separate paths for playes 1/2 for recoloring only
                         if first_player:
-                            used_paths_player1.append((ball_position, new_pos))
+                            used_paths_player1.append((ball_pos, new_pos))
                         elif not first_player:
-                            used_paths_player2.append((ball_position, new_pos))
+                            used_paths_player2.append((ball_pos, new_pos))
 
-                        used_paths.append((ball_position, new_pos))
+                        used_paths.append((ball_pos, new_pos))
                         play_sound("kick")
                         if win_condition(new_pos) == "first":
                             fpwon = True
@@ -464,7 +448,7 @@ def game_body():
                         if change:
                             first_player = not first_player
 
-                        ball_position = new_pos
+                        ball_pos = new_pos
                         if blocked() == 0:
                             if first_player:
                                 spwon = True
@@ -480,9 +464,9 @@ def game_body():
         # Clear the screen
         screen.fill(WHITE)
         # Draw grid lines
-        for x in range(BORDER_SIZE - 5 * GRID_SIZE, WIDTH, GRID_SIZE):
+        for x in range(BORDER - 5 * G_SIZE, WIDTH, G_SIZE):
             pygame.draw.line(screen, PALE_BLUE, (x, 0), (x, HEIGHT))
-        for y in range(BORDER_SIZE - 5 * GRID_SIZE, HEIGHT, GRID_SIZE):
+        for y in range(BORDER - 5 * G_SIZE, HEIGHT, G_SIZE):
             pygame.draw.line(screen, PALE_BLUE, (0, y), (WIDTH, y))
 
         # Draw used paths
@@ -498,7 +482,7 @@ def game_body():
             pygame.draw.line(screen, WHITE, path[0], path[1], 3)
         # Draw ball with image
         rect = img.get_rect()
-        rect.center = ball_position
+        rect.center = ball_pos
         screen.blit(img, rect)
 
         player_font.bold = True
@@ -510,61 +494,30 @@ def game_body():
         if player2_text == "Player 2":
             info_text = info_font.render(f"I  O  P", 20, DARK_BLUE)
             screen.blit(
-                info_text,
-                (
-                    WIDTH - 2 * BORDER_SIZE + 5,
-                    BORDER_SIZE - 2 * GRID_SIZE + GRID_SIZE // 4 + 95,
-                ),
+                info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 95)
             )
             info_text = info_font.render(f"K      ;  -  to move", 20, DARK_BLUE)
             screen.blit(
-                info_text,
-                (
-                    WIDTH - 2 * BORDER_SIZE + 5,
-                    BORDER_SIZE - 2 * GRID_SIZE + GRID_SIZE // 4 + 113,
-                ),
+                info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 113)
             )
             info_text = info_font.render(f",   .   /", 20, DARK_BLUE)
             screen.blit(
-                info_text,
-                (
-                    WIDTH - 2 * BORDER_SIZE + 5,
-                    BORDER_SIZE - 2 * GRID_SIZE + GRID_SIZE // 4 + 131,
-                ),
+                info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 131)
             )
 
         info_text = info_font.render(f"ESC to quit", 20, DARK_BLUE)
-        screen.blit(
-            info_text,
-            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4),
-        )
-
+        screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE))
         info_text = info_font.render(f"F5 to restart", 20, DARK_BLUE)
-        screen.blit(
-            info_text,
-            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 24),
-        )
-
+        screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 24))
         info_text = info_font.render(f"F3 to switch to versus CPU", 20, DARK_BLUE)
-        screen.blit(
-            info_text,
-            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 48),
-        )
+        screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 48))
         info_text = info_font.render(f"Q W E", 20, DARK_BLUE)
-        screen.blit(
-            info_text,
-            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 72),
-        )
+        screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 72))
         info_text = info_font.render(f"A     D  -  to move", 20, DARK_BLUE)
-        screen.blit(
-            info_text,
-            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 92),
-        )
+        screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 92))
         info_text = info_font.render(f"Z  X C", 20, DARK_BLUE)
-        screen.blit(
-            info_text,
-            (BORDER_SIZE + 5, HEIGHT - BORDER_SIZE - GRID_SIZE + GRID_SIZE // 4 + 112),
-        )
+        screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 112))
+
         if fpwon:
             v_text = v_font.render("Player 1 WON!", 36, RED)
             screen.blit(
@@ -586,13 +539,13 @@ def game_body():
 
         screen.blit(
             p1_text,
-            (WIDTH // 2 + GRID_SIZE * 1.5, HEIGHT - BORDER_SIZE - GRID_SIZE * 0.8),
+            (WIDTH // 2 + G_SIZE * 1.5, HEIGHT - BORDER - G_SIZE * 0.8),
         )
         screen.blit(
             p2_text,
             (
-                WIDTH // 2 - GRID_SIZE * 1.5 - p2_text.get_width(),
-                BORDER_SIZE + GRID_SIZE - GRID_SIZE * 0.8,
+                WIDTH // 2 - G_SIZE * 1.5 - p2_text.get_width(),
+                BORDER + G_SIZE - G_SIZE * 0.8,
             ),
         )
 
@@ -601,21 +554,21 @@ def game_body():
         # if 1 player mode, AI move
         if not first_player and versus_ai and not fpwon and not spwon:
             best_move = calculate_best_move(
-                ball_position,
+                ball_pos,
                 directions,
                 used_paths,
-                BORDER_SIZE,
-                GRID_WIDTH,
-                GRID_HEIGHT,
-                GRID_SIZE,
+                BORDER,
+                g_wid,
+                g_hei,
+                G_SIZE,
                 directions2,
             )
             # move ball across the best move path
             if not first_player:
-                ball_position = cpu_move(best_move)
-                if win_condition(ball_position) == "first":
+                ball_pos = cpu_move(best_move)
+                if win_condition(ball_pos) == "first":
                     fpwon = True
-                elif win_condition(ball_position) == "second":
+                elif win_condition(ball_pos) == "second":
                     spwon = True
                 first_player = True
 
