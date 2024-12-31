@@ -147,7 +147,6 @@ def game_body():
     g_wid = 2 * x * G_SIZE
     g_hei = 2 * y * G_SIZE
     WIDTH, HEIGHT = g_wid + 2 * BORDER, g_hei + 2 * BORDER
-    half_h = HEIGHT / 2
     half_w = WIDTH / 2
     FPS = 144
 
@@ -386,7 +385,6 @@ def game_body():
     global restarting_loop  # so game doesn't just quit
     while running:
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 restarting_loop = False
                 running = False
@@ -406,8 +404,8 @@ def game_body():
 
                 if event.key == pygame.K_F5:
                     running = False
-                if (key in directions and first_player == True and not spwon) or (
-                    key in directions2 and first_player == False and not fpwon
+                if (key in directions and first_player and not spwon) or (
+                    key in directions2 and not first_player and not fpwon
                 ):
                     if first_player:
                         new_pos = [
@@ -491,30 +489,30 @@ def game_body():
         p2_text = player_font.render(player2_text, 36, BLUE)
 
         if player2_text == "Player 2":
-            info_text = info_font.render(f"I  O  P", 20, DARK_BLUE)
+            info_text = info_font.render("I  O  P", 20, DARK_BLUE)
             screen.blit(
                 info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 95)
             )
-            info_text = info_font.render(f"K      ;  -  to move", 20, DARK_BLUE)
+            info_text = info_font.render("K      ;  -  to move", 20, DARK_BLUE)
             screen.blit(
                 info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 113)
             )
-            info_text = info_font.render(f",   .   /", 20, DARK_BLUE)
+            info_text = info_font.render(",   .   /", 20, DARK_BLUE)
             screen.blit(
                 info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 131)
             )
 
-        info_text = info_font.render(f"ESC to quit", 20, DARK_BLUE)
+        info_text = info_font.render("ESC to quit", 20, DARK_BLUE)
         screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE))
-        info_text = info_font.render(f"F5 to restart", 20, DARK_BLUE)
+        info_text = info_font.render("F5 to restart", 20, DARK_BLUE)
         screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 24))
-        info_text = info_font.render(f"F3 to switch to versus CPU", 20, DARK_BLUE)
+        info_text = info_font.render("F3 to switch to versus CPU", 20, DARK_BLUE)
         screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 48))
-        info_text = info_font.render(f"Q W E", 20, DARK_BLUE)
+        info_text = info_font.render("Q W E", 20, DARK_BLUE)
         screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 72))
-        info_text = info_font.render(f"A     D  -  to move", 20, DARK_BLUE)
+        info_text = info_font.render("A     D  -  to move", 20, DARK_BLUE)
         screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 92))
-        info_text = info_font.render(f"Z  X C", 20, DARK_BLUE)
+        info_text = info_font.render("Z  X C", 20, DARK_BLUE)
         screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE + 112))
 
         if fpwon:
@@ -538,12 +536,12 @@ def game_body():
 
         screen.blit(
             p1_text,
-            (WIDTH // 2 + G_SIZE * 1.5, HEIGHT - BORDER - G_SIZE * 0.8),
+            (half_w + G_SIZE * 1.5, HEIGHT - BORDER - G_SIZE * 0.8),
         )
         screen.blit(
             p2_text,
             (
-                WIDTH // 2 - G_SIZE * 1.5 - p2_text.get_width(),
+                half_w - G_SIZE * 1.5 - p2_text.get_width(),
                 BORDER + G_SIZE - G_SIZE * 0.8,
             ),
         )
