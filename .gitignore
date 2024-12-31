@@ -4,3 +4,4 @@ dist/
 football.spec
 compile.bat
 *.kra
+pyproject.toml

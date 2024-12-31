@@ -42,9 +42,7 @@ def calculate_best_move(
             return False
         return True
 
-    def blocked(
-        test_pos, path
-    ):  # returns free paths (0=none) from point, blocking way in with path
+    def blocked(test_pos, path):  # returns free paths (0=none) from point, blocking way in with path
         directions_available = 8
         new_pos = [test_pos[0] - GRID_SIZE, test_pos[1] - GRID_SIZE]
         if cant_move(new_pos, path):
@@ -77,9 +75,7 @@ def calculate_best_move(
         distancex = abs(position[0] - (GRID_WIDTH // 2 + BORDER_SIZE))
         return distancex * distancex + distancey * distancey
 
-    def explore_paths(
-        current_position, tested_path, best_move, best_score, time_started
-    ):
+    def explore_paths(current_position, tested_path, best_move, best_score, time_started):
         # Recursively explore all possible paths.
         if time.time() > time_started + 3:
             return best_move, best_score
@@ -94,9 +90,7 @@ def calculate_best_move(
 
                 if bounce(new_pos) and blocked(new_pos, tested_path) > 0:
                     # Recurse deeper for further moves
-                    best_move, best_score = explore_paths(
-                        new_pos, tested_path, best_move, best_score, time_started
-                    )
+                    best_move, best_score = explore_paths(new_pos, tested_path, best_move, best_score, time_started)
                 elif bounce(new_pos):  # blocked
                     current_score = float("inf")
                     tested_path.pop()
@@ -120,9 +114,7 @@ def calculate_best_move(
 
     # Start the recursive exploration
     time_started = time.time()  # to check max time
-    best_move, best_score = explore_paths(
-        ball_position, tested_path, best_move, best_score, time_started
-    )
+    best_move, best_score = explore_paths(ball_position, tested_path, best_move, best_score, time_started)
     waited = time.time() - time_started
     if waited < 1.5:  # minimum delay for AI move
         pygame.time.delay(1500 - int(waited * 10000))
@@ -201,15 +193,11 @@ def game_body():
 
     def win_condition(position):
         if position[1] == BORDER and (
-            position[0] == int(g_wid / 2) + BORDER
-            or position[0] == int(g_wid / 2) + BORDER - G_SIZE
-            or position[0] == int(g_wid / 2) + BORDER + G_SIZE
+            position[0] == int(g_wid / 2) + BORDER or position[0] == int(g_wid / 2) + BORDER - G_SIZE or position[0] == int(g_wid / 2) + BORDER + G_SIZE
         ):
             return "first"
         elif position[1] == BORDER + g_hei and (
-            position[0] == int(g_wid / 2) + BORDER
-            or position[0] == int(g_wid / 2) + BORDER - G_SIZE
-            or position[0] == int(g_wid / 2) + BORDER + G_SIZE
+            position[0] == int(g_wid / 2) + BORDER or position[0] == int(g_wid / 2) + BORDER - G_SIZE or position[0] == int(g_wid / 2) + BORDER + G_SIZE
         ):
             return "second"
         else:
@@ -404,9 +392,7 @@ def game_body():
 
                 if event.key == pygame.K_F5:
                     running = False
-                if (key in directions and first_player and not spwon) or (
-                    key in directions2 and not first_player and not fpwon
-                ):
+                if (key in directions and first_player and not spwon) or (key in directions2 and not first_player and not fpwon):
                     if first_player:
                         new_pos = [
                             ball_pos[0] + directions[key][0],
@@ -467,9 +453,7 @@ def game_body():
             pygame.draw.line(screen, PALE_BLUE, (0, y), (WIDTH, y))
 
         # Draw used paths
-        for (
-            path
-        ) in used_paths:  # all blocked and bounce enabling, all lines/goals/moves
+        for path in used_paths:  # all blocked and bounce enabling, all lines/goals/moves
             pygame.draw.line(screen, DARK_BLUE, path[0], path[1], 2)
         for path in used_paths_player1:
             pygame.draw.line(screen, GREEN, path[0], path[1], 3)
@@ -490,17 +474,11 @@ def game_body():
 
         if player2_text == "Player 2":
             info_text = info_font.render("I  O  P", 20, DARK_BLUE)
-            screen.blit(
-                info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 95)
-            )
+            screen.blit(info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 95))
             info_text = info_font.render("K      ;  -  to move", 20, DARK_BLUE)
-            screen.blit(
-                info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 113)
-            )
+            screen.blit(info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 113))
             info_text = info_font.render(",   .   /", 20, DARK_BLUE)
-            screen.blit(
-                info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 131)
-            )
+            screen.blit(info_text, (WIDTH - 2 * BORDER + 5, BORDER - 1.75 * G_SIZE + 131))
 
         info_text = info_font.render("ESC to quit", 20, DARK_BLUE)
         screen.blit(info_text, (BORDER + 5, HEIGHT - BORDER - 0.75 * G_SIZE))
@@ -550,9 +528,7 @@ def game_body():
         clock.tick(FPS)
         # if 1 player mode, AI move
         if not first_player and versus_ai and not fpwon and not spwon:
-            best_move = calculate_best_move(
-                ball_pos, directions, used_paths, BORDER, g_wid, g_hei, G_SIZE
-            )
+            best_move = calculate_best_move(ball_pos, directions, used_paths, BORDER, g_wid, g_hei, G_SIZE)
             # move ball across the best move path
             if not first_player:
                 ball_pos = cpu_move(best_move)
