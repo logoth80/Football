@@ -15,7 +15,6 @@ def calculate_best_move(
     GRID_WIDTH,
     GRID_HEIGHT,
     GRID_SIZE,
-    opponent_directions,
 ):
     def is_valid_move(current_position, new_pos, path):
         # Check if a move is valid.
@@ -561,7 +560,6 @@ def game_body():
                 g_wid,
                 g_hei,
                 G_SIZE,
-                directions2,
             )
             # move ball across the best move path
             if not first_player:
