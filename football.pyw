@@ -160,7 +160,7 @@ def game_body():
 
     player_font = pygame.font.SysFont("Georgia", 36)
     v_font = pygame.font.SysFont("Cambria", 72)
-    info_font = pygame.font.SysFont("Ariel", 20)
+    info_font = pygame.font.SysFont("Arial", 16)
 
     img = pygame.image.load("ball.png")
     img = pygame.transform.scale(img, (G_SIZE * 0.5, G_SIZE * 0.5))
